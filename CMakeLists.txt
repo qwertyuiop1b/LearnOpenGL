@@ -4,14 +4,16 @@ set(CMAKE_CXX_STANDARD 17)
 include_directories(${PROJECT_SOURCE_DIR}/include)
 link_directories(${PROJECT_SOURCE_DIR}/lib)
 
-set(GLAD_SRC ${PROJECT_SOURCE_DIR}/src/glad.c)
+set(GLAD_SRC ${PROJECT_SOURCE_DIR}/src/glad.c src/utils/Shader.cpp)
+
+aux_source_directory(${PROJECT_SOURCE_DIR}/src/utils utils)
 
 
 file(GLOB CHR1 ${PROJECT_SOURCE_DIR}/src/01_Start/*.cpp)
 foreach (file ${CHR1})
     string(REGEX REPLACE ".*/(.+)\\.cpp" "\\1" exe ${file})
     message(exe: ${exe})
-    add_executable(${exe} ${file} ${GLAD_SRC})
+    add_executable(${exe} ${file} ${GLAD_SRC} ${utils})
     target_link_libraries(${exe} glfw3)
 endforeach ()
 

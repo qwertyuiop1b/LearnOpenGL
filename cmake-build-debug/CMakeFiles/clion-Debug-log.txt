@@ -1,0 +1,10 @@
+"D:\Program Files\JetBrains\CLion 2023.1.2\bin\cmake\win\x64\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - NMake Makefiles" -S E:\CodeProjects\LearnOpenGL -B E:\CodeProjects\LearnOpenGL\cmake-build-debug
+exe:01_Triangle
+exe:02_Rectangle
+exe:03_TwoTriangles
+exe:04_TwoVAOTriangle
+exe:05_TwoFragmentShader
+exe:06_Glsl
+-- Configuring done
+-- Generating done
+-- Build files have been written to: E:/CodeProjects/LearnOpenGL/cmake-build-debug

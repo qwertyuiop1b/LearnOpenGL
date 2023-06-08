@@ -1,0 +1,105 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"jsonFile" : "directory-.-Debug-d0094a50bb2071803777.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.25"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "OpenGL",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "01_Triangle::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-01_Triangle-Debug-eea5600659a09ac2b9e7.json",
+					"name" : "01_Triangle",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "02_Rectangle::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-02_Rectangle-Debug-73db0b8cdea456acb974.json",
+					"name" : "02_Rectangle",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "03_TwoTriangles::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-03_TwoTriangles-Debug-d3a87988e10373e7e4b7.json",
+					"name" : "03_TwoTriangles",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "04_TwoVAOTriangle::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-04_TwoVAOTriangle-Debug-16c91599e288087035aa.json",
+					"name" : "04_TwoVAOTriangle",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "05_TwoFragmentShader::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-05_TwoFragmentShader-Debug-d4e80ac1a2247743b507.json",
+					"name" : "05_TwoFragmentShader",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "06_Glsl::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-06_Glsl-Debug-3302cc2e812f7e26c47e.json",
+					"name" : "06_Glsl",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "E:/CodeProjects/LearnOpenGL/cmake-build-debug",
+		"source" : "E:/CodeProjects/LearnOpenGL"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 4
+	}
+}
