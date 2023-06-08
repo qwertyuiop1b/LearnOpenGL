@@ -2,5 +2,5 @@
 .vscode
 .idea
 .exe
-
+^cmake-**/
 cmake-build-debug-visual-studio--64/
