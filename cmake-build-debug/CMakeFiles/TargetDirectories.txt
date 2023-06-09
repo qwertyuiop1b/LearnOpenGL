@@ -1,8 +1,0 @@
-E:/CodeProjects/LearnOpenGL/cmake-build-debug/CMakeFiles/01_Triangle.dir
-E:/CodeProjects/LearnOpenGL/cmake-build-debug/CMakeFiles/02_Rectangle.dir
-E:/CodeProjects/LearnOpenGL/cmake-build-debug/CMakeFiles/03_TwoTriangles.dir
-E:/CodeProjects/LearnOpenGL/cmake-build-debug/CMakeFiles/04_TwoVAOTriangle.dir
-E:/CodeProjects/LearnOpenGL/cmake-build-debug/CMakeFiles/05_TwoFragmentShader.dir
-E:/CodeProjects/LearnOpenGL/cmake-build-debug/CMakeFiles/06_Glsl.dir
-E:/CodeProjects/LearnOpenGL/cmake-build-debug/CMakeFiles/edit_cache.dir
-E:/CodeProjects/LearnOpenGL/cmake-build-debug/CMakeFiles/rebuild_cache.dir

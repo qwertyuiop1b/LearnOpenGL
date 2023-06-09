@@ -23,7 +23,9 @@ public:
 
     void setFloat(const std::string &name, float value) const;
 
-    ~Shader();
+    void setFloat2(const std::string &name, float value1, float value2) const;
+
+    void setMatrix3(const std::string &name,  float data[3][3]) const;
 };
 
 

@@ -32,7 +32,7 @@ int main() {
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-  GLFWwindow *window = glfwCreateWindow(WIDTH, HEIGHT, "02_Rectangle", nullptr, nullptr);
+  GLFWwindow *window = glfwCreateWindow(WIDTH, HEIGHT, "03_TwoTriangles", nullptr, nullptr);
   if (window == nullptr) {
     std::cout << "Failed to create window" << std::endl;
     glfwTerminate();
