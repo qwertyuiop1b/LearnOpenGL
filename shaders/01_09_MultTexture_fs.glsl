@@ -14,5 +14,5 @@ void main() {
 //    fragColor = mix(texture(img1, vTexCoord), texture(img2, vec2(1.0 - vTexCoord.x, vTexCoord.y)), 0.3);
 //    fragColor = mix(texture(img1, vTexCoord), texture(img2, vTexCoord * 2), 0.3);
 
-    fragColor = mix(texture(img1, vTexCoord), texture(img2, vTexCoord), mixlevel);
+    fragColor = mix(texture(img1, vTexCoord), texture(img2, vTexCoord), mixLevel);
 }

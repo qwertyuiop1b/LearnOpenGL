@@ -6,6 +6,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
+
+float mixLevel = 0.2f;
 const unsigned int WIDTH = 800;
 const unsigned int HEIGHT = 600;
 
@@ -75,21 +77,21 @@ int main() {
 
 
   // 创建矩形顶点数据和颜色和贴图坐标
-//  float vertices[] = {
-//      //     ---- 位置 ----                      ---- 颜色 ----                  - 纹理坐标 -
-//      0.5f,   0.5f,   0.0f,   1.0f,  0.0f,  0.0f,    1.0f,  1.0f,   // 右上
-//      0.5f,   -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // 右下
-//      -0.5f, -0.5f,0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // 左下
-//      -0.5f, 0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // 左上
-//  };
-
   float vertices[] = {
       //     ---- 位置 ----                      ---- 颜色 ----                  - 纹理坐标 -
-      0.5f,   0.5f,   0.0f,   1.0f,  0.0f,  0.0f,    0.55f,  0.55f,   // 右上
-      0.5f,   -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   0.45f, 0.55f,   // 右下
-      -0.5f, -0.5f,0.0f,   0.0f, 0.0f, 1.0f,   0.45f, 0.45f,   // 左下
-      -0.5f, 0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.45f, 0.55f    // 左上
+      0.5f,   0.5f,   0.0f,   1.0f,  0.0f,  0.0f,    1.0f,  1.0f,   // 右上
+      0.5f,   -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // 右下
+      -0.5f, -0.5f,0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // 左下
+      -0.5f, 0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // 左上
   };
+
+//  float vertices[] = {
+//      //     ---- 位置 ----                      ---- 颜色 ----                  - 纹理坐标 -
+//      0.5f,   0.5f,   0.0f,   1.0f,  0.0f,  0.0f,    0.55f,  0.55f,   // 右上
+//      0.5f,   -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   0.45f, 0.55f,   // 右下
+//      -0.5f, -0.5f,0.0f,   0.0f, 0.0f, 1.0f,   0.45f, 0.45f,   // 左下
+//      -0.5f, 0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.45f, 0.55f    // 左上
+//  };
 
   unsigned int indices[] = {
       0, 1, 2,
@@ -127,6 +129,8 @@ int main() {
   shader.setInt("img2", 1);
 
 
+
+
   while(!glfwWindowShouldClose(window)) {
     processInput(window);
     glClearColor(0.3, 0.2, 0.5, 1.0);
@@ -138,6 +142,7 @@ int main() {
     glBindTexture(GL_TEXTURE_2D, texture2);
 
     shader.use();
+    shader.setFloat("mixLevel", mixLevel);
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
@@ -163,5 +168,18 @@ void FramebufferSizeCallback(GLFWwindow* window, int width, int height) {
 void processInput(GLFWwindow* window) {
   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
     glfwSetWindowShouldClose(window, true);
+  }
+
+  if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+    mixLevel +=  0.001f;
+    if (mixLevel >= 1.0f) {
+      mixLevel = 1.0f;
+    }
+  }
+  if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+    mixLevel -= 0.001f;
+    if (mixLevel <= 0.0f) {
+      mixLevel = 0.0f;
+    }
   }
 }
