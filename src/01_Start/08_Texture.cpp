@@ -37,7 +37,7 @@ int main() {
   Shader shader(vertexPath, fragmentPath);
 
   int width, height, nrChannels;
-  unsigned char* data = stbi_load("../textures/wall.jpg", &width, &height, &nrChannels, 0);
+  unsigned char* data = stbi_load("../textures/container.jpg", &width, &height, &nrChannels, 0);
   if (!data) {
     std::cout << "not found file" << std::endl;
   }
@@ -81,7 +81,7 @@ int main() {
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
   // 0 顶点  1 颜色  2 纹理
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *) 0);
   glEnableVertexAttribArray(0);
 
   glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *) (3 * sizeof(float)));
