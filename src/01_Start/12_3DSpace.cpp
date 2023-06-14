@@ -12,7 +12,8 @@
 const unsigned int WIDTH = 800;
 const unsigned int HEIGHT = 600;
 
-float clamp(float min, float max, float t);
+unsigned int actualWidth = WIDTH;
+unsigned int actualHeight = HEIGHT;
 
 void processInput(GLFWwindow* window);
 
@@ -24,7 +25,7 @@ int main() {
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-  GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "11_MultTransformation", nullptr, nullptr);
+  GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "12_3DSpace", nullptr, nullptr);
   if (!window) {
     std::cout << "Failed to create window" << std::endl;
     return -1;
@@ -38,8 +39,8 @@ int main() {
     return -1;
   }
 
-  const char* vertPath = "../shaders/01_10_Transformation_vs.glsl";
-  const char* fragmentPath = "../shaders/01_10_Transformation_fs.glsl";
+  const char* vertPath = "../shaders/01_12_3DSpace_vs.glsl";
+  const char* fragmentPath = "../shaders/01_12_3DSpace_fs.glsl";
   Shader shader(vertPath, fragmentPath);
 
 
@@ -114,19 +115,21 @@ int main() {
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-//  glm::vec4 testPoint(1.0f, 0.0f, 0.0f, 1.0f);
-//  glm::mat4 transformation = glm::mat4(1.0f);
-//  transformation = glm::rotate(transformation, glm::radians(90.0f), glm::vec3(0, 0, 1));
-//  transformation = glm::translate(transformation, glm::vec3(0.3, 0, 0));
-//  testPoint = transformation * testPoint;
-//  std::cout << testPoint.x << " " << testPoint.y << " " << testPoint.z << std::endl;
+  // 创建MVP matrix
+  glm::mat4 modelMatrix(1.0f);
+  modelMatrix = glm::rotate(modelMatrix, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+
+  glm::mat4 viewMatrix(1.0f);
+  viewMatrix = glm::translate(viewMatrix, glm::vec3(0.0f, 0.0f, -3.0f));
 
 
-
+  glm::mat4 projectionMatrix(1.0f);
 
   shader.use();
   shader.setInt("img1", 0);
   shader.setInt("img2", 1);
+
+
 
 
   while(!glfwWindowShouldClose(window)) {
@@ -138,26 +141,19 @@ int main() {
     glBindTexture(GL_TEXTURE_2D, texture1);
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, texture2);
-
-
     shader.use();
-    unsigned int transformLoc = glGetUniformLocation(shader.ID, "transformation");
-    glm::mat4 transformation = glm::mat4(1.0f);
-    // 交换两个变换的顺序
-    transformation = glm::translate(transformation, glm::vec3(0.5f, -0.5f, 0.0f));
-    transformation = glm::rotate(transformation, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
-    glUniformMatrix4fv(transformLoc, 1, false, glm::value_ptr(transformation));
+    projectionMatrix = glm::perspective(glm::radians(45.0f), float(actualWidth) / float(actualHeight), 0.1f, 100.0f);
+    unsigned int modelMatrixLoc = glGetUniformLocation(shader.ID, "modelMatrix");
+    unsigned int viewMatrixLoc = glGetUniformLocation(shader.ID, "viewMatrix");
+
+    // 3种方法
+    glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+    glUniformMatrix4fv(viewMatrixLoc, 1, GL_FALSE, &viewMatrix[0][0]);
+    shader.setMatrix4("projectionMatrix", projectionMatrix);
+
+
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-    glm::mat4 transformation2 = glm::mat4(1.0f);
-    transformation2 = glm::translate(transformation2, glm::vec3(-0.5f, 0.5f, 0.0f));
-    transformation2 = glm::scale(transformation2, glm::vec3((sin(glfwGetTime()) + 1.0f) * 0.5f));
-    transformation2 = glm::rotate(transformation2, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
-    glUniformMatrix4fv(transformLoc, 1, false, glm::value_ptr(transformation2));
-
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
     glfwSwapBuffers(window);
     glfwPollEvents();
 
@@ -172,6 +168,8 @@ int main() {
 
 void framebufferSizeCallback(GLFWwindow* window, int width, int height) {
   glViewport(0, 0, width, height);
+  actualWidth = width;
+  actualHeight = height;
 }
 
 void processInput(GLFWwindow* window) {
@@ -180,12 +178,3 @@ void processInput(GLFWwindow* window) {
   }
 }
 
-float clamp(float min, float max, float t) {
-  if (t <= min) {
-    return min;
-  }
-  if (t >= max) {
-    return max;
-  }
-  return t;
-}

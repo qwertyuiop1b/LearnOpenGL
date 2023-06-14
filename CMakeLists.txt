@@ -6,7 +6,7 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PROJECT_SOURCE_DIR}/src)
 link_directories(${PROJECT_SOURCE_DIR}/lib)
 
-set(GLAD_SRC ${PROJECT_SOURCE_DIR}/src/glad.c src/utils/Shader.cpp)
+set(GLAD_SRC ${PROJECT_SOURCE_DIR}/src/glad.c)
 
 aux_source_directory(${PROJECT_SOURCE_DIR}/src/utils utils)
 
