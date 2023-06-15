@@ -142,8 +142,6 @@ int main() {
   glBindVertexArray(0);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-
-
   shader.use();
   shader.setInt("img1", 0);
   shader.setInt("img2", 1);
@@ -165,6 +163,7 @@ int main() {
           glm::vec3(-1.3f,  1.0f, -1.5f)
   };
 
+  float radius = 10.0f;
   while(!glfwWindowShouldClose(window)) {
     processInput(window);
     glClearColor(0.3f, 0.2f, 0.5f, 1.0f);
@@ -176,29 +175,11 @@ int main() {
     glBindTexture(GL_TEXTURE_2D, texture2);
     shader.use();
 
-    // 创建MVP matrix
-    /*
-    //单个立方体
-    glm::mat4 modelMatrix(1.0f);
-    modelMatrix = glm::rotate(modelMatrix, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
 
+    float camX = sin(glfwGetTime()) * radius;
+    float camZ = cos(glfwGetTime()) * radius;
     glm::mat4 viewMatrix(1.0f);
-    viewMatrix = glm::translate(viewMatrix, glm::vec3(0.0f, 0.0f, -3.0f));
-
-    glm::mat4 projectionMatrix(1.0f);
-    projectionMatrix = glm::perspective(glm::radians(45.0f), float(actualWidth) / float(actualHeight), 0.1f, 100.0f);
-
-    shader.setMatrix4("modelMatrix", modelMatrix);
-    shader.setMatrix4("viewMatrix", viewMatrix);
-    shader.setMatrix4("projectionMatrix", projectionMatrix);
-
-    glBindVertexArray(VAO);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
-    */
-
-
-    glm::mat4 viewMatrix(1.0f);
-    viewMatrix = glm::translate(viewMatrix, glm::vec3(0.0f, 0.0f, -3.0f));
+    viewMatrix = glm::lookAt(glm::vec3(camX, 0.0f, camZ), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
     glm::mat4 projectionMatrix(1.0f);
     projectionMatrix = glm::perspective(glm::radians(45.0f), float(actualWidth) / float(actualHeight), 0.1f, 1000.0f);

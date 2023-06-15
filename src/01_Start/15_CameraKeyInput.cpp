@@ -1,3 +1,4 @@
+// todo 闪一下
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -12,12 +13,26 @@
 const unsigned int WIDTH = 800;
 const unsigned int HEIGHT = 600;
 
-unsigned int actualWidth = WIDTH;
-unsigned int actualHeight = HEIGHT;
+
+glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, 1.0f);
+glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+
+float deltaTime = 0.0f;
+float lastFrame = 0.0f;
+
+float lastX = WIDTH / 2.0, lastY = HEIGHT / 2.0;
+float yaw = 0.0f, pitch = 0.0f;
+bool firstMouse = true;
+float fov = 45.0f;
 
 void processInput(GLFWwindow* window);
 
 void framebufferSizeCallback(GLFWwindow* window, int width, int height);
+
+void mouseCallback(GLFWwindow* window, double xpos, double ypos);
+
+void scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 
 int main() {
   glfwInit();
@@ -143,6 +158,13 @@ int main() {
   glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 
+  // 捕获鼠标
+  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+  glfwSetCursorPosCallback(window, mouseCallback);
+
+  glfwSetScrollCallback(window, scrollCallback);
+
+
 
   shader.use();
   shader.setInt("img1", 0);
@@ -165,10 +187,20 @@ int main() {
           glm::vec3(-1.3f,  1.0f, -1.5f)
   };
 
+
+
+  glm::mat4 viewMatrix(1.0f);
+  glm::mat4 projectionMatrix(1.0f);
+
   while(!glfwWindowShouldClose(window)) {
     processInput(window);
     glClearColor(0.3f, 0.2f, 0.5f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+    float currentTime = glfwGetTime();
+    deltaTime = currentTime - lastFrame;
+    lastFrame = currentTime;
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture1);
@@ -176,32 +208,9 @@ int main() {
     glBindTexture(GL_TEXTURE_2D, texture2);
     shader.use();
 
-    // 创建MVP matrix
-    /*
-    //单个立方体
-    glm::mat4 modelMatrix(1.0f);
-    modelMatrix = glm::rotate(modelMatrix, (float)glfwGetTime() * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
 
-    glm::mat4 viewMatrix(1.0f);
-    viewMatrix = glm::translate(viewMatrix, glm::vec3(0.0f, 0.0f, -3.0f));
-
-    glm::mat4 projectionMatrix(1.0f);
-    projectionMatrix = glm::perspective(glm::radians(45.0f), float(actualWidth) / float(actualHeight), 0.1f, 100.0f);
-
-    shader.setMatrix4("modelMatrix", modelMatrix);
-    shader.setMatrix4("viewMatrix", viewMatrix);
-    shader.setMatrix4("projectionMatrix", projectionMatrix);
-
-    glBindVertexArray(VAO);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
-    */
-
-
-    glm::mat4 viewMatrix(1.0f);
-    viewMatrix = glm::translate(viewMatrix, glm::vec3(0.0f, 0.0f, -3.0f));
-
-    glm::mat4 projectionMatrix(1.0f);
-    projectionMatrix = glm::perspective(glm::radians(45.0f), float(actualWidth) / float(actualHeight), 0.1f, 1000.0f);
+    viewMatrix = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+    projectionMatrix = glm::perspective(glm::radians(fov), float(WIDTH) / float(HEIGHT), 0.1f, 100.0f);
 
     shader.setMatrix4("viewMatrix", viewMatrix);
     shader.setMatrix4("projectionMatrix", projectionMatrix);
@@ -211,14 +220,11 @@ int main() {
       glm::mat4 modelMatrix(1.0f);
       modelMatrix = glm::translate(modelMatrix, cubePosition[i]);
       float angle = 20.f * i;
-
-
       if (i % 3 == 0) {
         modelMatrix = glm::rotate(modelMatrix, glm::radians(float(glfwGetTime()) * 50.0f), glm::vec3(1.0f, 0.3f, 0.5f));
       } else {
         modelMatrix = glm::rotate(modelMatrix, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
       }
-
       shader.setMatrix4("modelMatrix", modelMatrix);
       glDrawArrays(GL_TRIANGLES, 0, 36);
     }
@@ -239,13 +245,79 @@ int main() {
 
 void framebufferSizeCallback(GLFWwindow* window, int width, int height) {
   glViewport(0, 0, width, height);
-  actualWidth = width;
-  actualHeight = height;
 }
 
 void processInput(GLFWwindow* window) {
+
   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
     glfwSetWindowShouldClose(window, true);
   }
+
+  float cameraSpeed = 2.5f *deltaTime;
+  if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+    cameraPos += cameraSpeed * cameraFront;
+  }
+
+  if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+    cameraPos -= cameraSpeed * cameraFront;
+  }
+
+  if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+    cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+  }
+
+  if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+    cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+  }
+
+
 }
 
+void mouseCallback(GLFWwindow* window, double xpos, double ypos) {
+  if (firstMouse) {
+    lastX = xpos;
+    lastY = ypos;
+    firstMouse = false;
+  }
+
+  float xoffset = xpos - lastX;
+  float yoffset = lastY - ypos;  // 因为y坐标是从底部往顶部依次增大的
+
+  lastX = xpos;
+  lastY = ypos;
+
+  float sensitivity = 0.05f;
+  xoffset *= sensitivity;
+  yoffset *= sensitivity;
+
+  yaw += xoffset;
+  pitch += yoffset;
+
+  if (pitch > 89.0f) {
+    pitch = 89.0f;
+  }
+  if (pitch < -89.0f) {
+    pitch = -89.0f;
+  }
+
+  glm::vec3 front;
+  front.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
+  front.y = sin(glm::radians(pitch));
+  front.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
+
+  cameraFront = front;
+}
+
+void scrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
+  if (fov >= 1.0f && fov <= 45.0f) {
+    fov -= yoffset;
+  }
+
+  if (fov <= 1.0f) {
+    fov = 1.0f;
+  }
+
+  if (fov >= 45.f) {
+    fov = 45.f;
+  }
+}
