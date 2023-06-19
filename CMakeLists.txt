@@ -20,3 +20,13 @@ foreach (file ${CHR1})
 endforeach ()
 
 
+
+file(GLOB CHR2 ${PROJECT_SOURCE_DIR}/src/02_Light/*.cpp)
+foreach (file2 ${CHR2})
+    string(REGEX REPLACE ".*/(.+)\\.cpp" "\\1" exe2 ${file2})
+    message(exe: ${exe2})
+    add_executable(${exe2} ${file2} ${GLAD_SRC} ${utils})
+    target_link_libraries(${exe2} glfw3)
+endforeach ()
+
+
