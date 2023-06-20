@@ -36,8 +36,8 @@ int main() {
     return -1;
   }
 
-  const char* vertexPath = "../shaders/01_09_MultTexture_vs.glsl";
-  const char* fragmentPath = "../shaders/01_09_MultTexture_fs.glsl";
+  const char* vertexPath = "../shaders/01_shaders/01_09_MultTexture_vs.glsl";
+  const char* fragmentPath = "../shaders/01_shaders/01_09_MultTexture_fs.glsl";
   Shader shader(vertexPath, fragmentPath);
 
   stbi_set_flip_vertically_on_load(true);

@@ -30,8 +30,8 @@ int main() {
     return -1;
   }
 
-  const char* vertexPath = "../shaders/01_07_TriangleOffset_vs.glsl";
-  const char* fragmentPath = "../shaders/01_07_TriangleOffset_fs.glsl";
+  const char* vertexPath = "../shaders/01_shaders/01_07_TriangleOffset_vs.glsl";
+  const char* fragmentPath = "../shaders/01_shaders/01_07_TriangleOffset_fs.glsl";
   Shader shader(vertexPath, fragmentPath);
 
   // 创建顶点数据和颜色

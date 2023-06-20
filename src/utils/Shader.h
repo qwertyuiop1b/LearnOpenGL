@@ -7,6 +7,7 @@
 #include <sstream>
 #include <iostream>
 #include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 
 class Shader {
@@ -27,6 +28,8 @@ public:
     void setFloat2(const std::string &name, float value1, float value2) const;
 
     void setFloat3(const std::string &name, float value1, float value2, float value3) const;
+
+    void setFloat3(const std::string &name, glm::vec3 &value) const;
 
     void setMatrix3(const std::string &name,  glm::mat3 &mat3 ) const;
 

@@ -1,8 +1,6 @@
+#include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <iostream>
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
 
 #include "utils/Shader.h"
 #include "utils/Camera.h"
@@ -15,9 +13,8 @@ void mouseCallback(GLFWwindow* window, double xpos, double ypos);
 void scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
 
-
 // Camera
-Camera camera(glm::vec3(0.0f, 0.0f, 8.0f));
+Camera camera(glm::vec3(0.0f, 0.0f, 6.0f));
 float lastX = WIDTH / 2.0f;
 float lastY = HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -28,7 +25,7 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 // lighting
-glm::vec3 lightPos(4.0f, 4.0f, 1.0f);
+glm::vec3 lightPos(0.f, 1.5f, 0.f);
 
 
 int main() {
@@ -51,13 +48,70 @@ int main() {
     return -1;
   }
 
-  const char* vertexPath = "../shaders/02_02_BaseLight_vs.glsl";
-  const char* fragmentPath = "../shaders/02_02_BaseLight_fs.glsl";
-  const char* lightFragmentPath = "../shaders/02_01_Color_Light_fs.glsl";
+  // 环境光
+  const char* vertexPath1 = "../shaders/02_shaders/02_01_Color_vs.glsl";
+  const char* fragmentPath1 = "../shaders/02_shaders/02_02_BaseLight_Ambient_fs.glsl";
+
+  // 漫反射
+  const char* vertexPath2 = "../shaders/02_shaders/02_02_BaseLight_Diffuse_vs.glsl";
+  const char* fragmentPath2 = "../shaders/02_shaders/02_02_BaseLight_Diffuse_fs.glsl";
+
+  // 高光
+  const char* vertexPath = "../shaders/02_shaders/02_02_BaseLight_Specular_vs.glsl";
+  const char* fragmentPath = "../shaders/02_shaders/02_02_BaseLight_Specular_fs.glsl";
+
+  const char* lightFragmentPath = "../shaders/02_shaders/02_01_Color_Light_fs.glsl";
+
   Shader shader(vertexPath, fragmentPath);
   Shader lightShader(vertexPath, lightFragmentPath);
 
-  // vertex & normal
+  // 立方体顶点数据
+//  float vertices[] = {
+//    -0.5f, -0.5f, -0.5f,
+//    0.5f, -0.5f, -0.5f,
+//    0.5f,  0.5f, -0.5f,
+//    0.5f,  0.5f, -0.5f,
+//    -0.5f,  0.5f, -0.5f,
+//    -0.5f, -0.5f, -0.5f,
+//
+//    -0.5f, -0.5f,  0.5f,
+//    0.5f, -0.5f,  0.5f,
+//    0.5f,  0.5f,  0.5f,
+//    0.5f,  0.5f,  0.5f,
+//    -0.5f,  0.5f,  0.5f,
+//    -0.5f, -0.5f,  0.5f,
+//
+//    -0.5f,  0.5f,  0.5f,
+//    -0.5f,  0.5f, -0.5f,
+//    -0.5f, -0.5f, -0.5f,
+//    -0.5f, -0.5f, -0.5f,
+//    -0.5f, -0.5f,  0.5f,
+//    -0.5f,  0.5f,  0.5f,
+//
+//    0.5f,  0.5f,  0.5f,
+//    0.5f,  0.5f, -0.5f,
+//    0.5f, -0.5f, -0.5f,
+//    0.5f, -0.5f, -0.5f,
+//    0.5f, -0.5f,  0.5f,
+//    0.5f,  0.5f,  0.5f,
+//
+//    -0.5f, -0.5f, -0.5f,
+//    0.5f, -0.5f, -0.5f,
+//    0.5f, -0.5f,  0.5f,
+//    0.5f, -0.5f,  0.5f,
+//    -0.5f, -0.5f,  0.5f,
+//    -0.5f, -0.5f, -0.5f,
+//
+//    -0.5f,  0.5f, -0.5f,
+//    0.5f,  0.5f, -0.5f,
+//    0.5f,  0.5f,  0.5f,
+//    0.5f,  0.5f,  0.5f,
+//    -0.5f,  0.5f,  0.5f,
+//    -0.5f,  0.5f, -0.5f,
+//  };
+
+
+  // 顶点和法线
   float vertices[] = {
     -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
     0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
@@ -102,6 +156,7 @@ int main() {
     -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
   };
 
+
   unsigned int VAO, VBO;
   glGenVertexArrays(1, &VAO);
   glBindVertexArray(VAO);
@@ -109,8 +164,8 @@ int main() {
   glBindBuffer(GL_ARRAY_BUFFER, VBO);
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
   glVertexAttribPointer(0, 3, GL_FLOAT, false, 6 * sizeof(float), (void *) 0);
-  glVertexAttribPointer(1, 3, GL_FLOAT, false, 6 * sizeof(float), (void *) (3 * sizeof(float)));
   glEnableVertexAttribArray(0);
+  glVertexAttribPointer(1, 3, GL_FLOAT, false, 6 * sizeof(float), (void *) (3 * sizeof(float)));
   glEnableVertexAttribArray(1);
   glBindVertexArray(0);
 
@@ -125,25 +180,27 @@ int main() {
   glEnable(GL_DEPTH_TEST);
 
   while(!glfwWindowShouldClose(window)) {
-    float currentFrame = static_cast<float>(glfwGetTime());
+    auto currentFrame = static_cast<float>(glfwGetTime());
     deltaTime = currentFrame - lastFrame;
     lastFrame = currentFrame;
 
     processInput(window);
-    glClearColor(0.3f, 0.2f, 0.1f, 1.0f);
+    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
     shader.use();
     shader.setFloat3("objectColor", 1.0f, 0.5f, 0.31f);
     shader.setFloat3("lightColor", 1.0f, 1.0f, 1.0f);
-    shader.setFloat3("lightPos", lightPos.x, lightPos.y, lightPos.z);
+    shader.setFloat3("lightPos", lightPos);
+    shader.setFloat3("viewPos", camera.Position);
     glm::mat4 projectionMatrix = glm::perspective(glm::radians(camera.Zoom), float(WIDTH)/float(HEIGHT), 0.1f, 100.0f);
     glm::mat4 viewMatrix = camera.GetViewMatrix();
     shader.setMatrix4("projectionMatrix", projectionMatrix);
     shader.setMatrix4("viewMatrix", viewMatrix);
     glm::mat4 modelMatrix = glm::mat4(1.0f);
-    modelMatrix = glm::rotate(modelMatrix, glm::radians(60.0f), glm::vec3(1.0f, 0.0f, 1.0f));
+    modelMatrix = glm::rotate(modelMatrix, glm::radians(60.0f), glm::vec3(1.0f, 1.0f, 0.0f));
+
     shader.setMatrix4("modelMatrix", modelMatrix);
     glBindVertexArray(VAO);
     glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -151,25 +208,20 @@ int main() {
     lightShader.use();
     lightShader.setMatrix4("projectionMatrix", projectionMatrix);
     lightShader.setMatrix4("viewMatrix", viewMatrix);
-
     modelMatrix = glm::mat4(1.0f);
-    modelMatrix = glm::scale(modelMatrix, glm::vec3(0.2f));
     modelMatrix = glm::translate(modelMatrix, lightPos);
+    modelMatrix = glm::scale(modelMatrix, glm::vec3(0.2f));
     lightShader.setMatrix4("modelMatrix", modelMatrix);
-
     glBindVertexArray(lightVAO);
     glDrawArrays(GL_TRIANGLES, 0, 36);
-
-
 
     glfwSwapBuffers(window);
     glfwPollEvents();
   }
-
-
-
-
-
+  glDeleteBuffers(1, &VBO);
+  glDeleteVertexArrays(1, &lightVAO);
+  glDeleteVertexArrays(1, &VAO);
+  glfwTerminate();
   return 0;
 }
 
@@ -193,8 +245,8 @@ void processInput(GLFWwindow *window) {
 }
 
 void mouseCallback(GLFWwindow* window, double xposIn, double yposIn){
-  float xpos = static_cast<float>(xposIn);
-  float ypos = static_cast<float>(yposIn);
+  auto xpos = static_cast<float>(xposIn);
+  auto ypos = static_cast<float>(yposIn);
   if (firstMouse) {
     lastX = xpos;
     lastY = ypos;
