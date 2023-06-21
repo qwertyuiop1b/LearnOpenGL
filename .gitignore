@@ -1,6 +1,6 @@
-/build
-.vscode
-.idea
+build/
+.vscode/
+.idea/
 .exe
 ^cmake-**/
 cmake-build-debug-visual-studio--64/
