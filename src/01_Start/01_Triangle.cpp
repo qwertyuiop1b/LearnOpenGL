@@ -1,3 +1,7 @@
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -16,10 +20,11 @@ void main() {
 
 const char* fragmentShaderSource = R"(
 #version 330 core
+uniform vec4 uColor;
 out vec4 FragColor;
 
 void main() {
-  FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
+  FragColor = uColor;
 }
 )";
 
@@ -53,6 +58,7 @@ int main() {
   // 加载opengl函数
   if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
     std::cout << "Failed to initialize GLAD" << std::endl;
+    glfwTerminate();
     return -1;
   }
 
@@ -119,6 +125,23 @@ int main() {
   glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindVertexArray(0);
 
+
+  // imgui
+  IMGUI_CHECKVERSION();
+  ImGui::CreateContext();
+  ImGuiIO& io = ImGui::GetIO(); (void)io;
+  ImGui::StyleColorsDark();
+  ImGui_ImplGlfw_InitForOpenGL(window, true);
+  ImGui_ImplOpenGL3_Init("#version 330");
+
+
+  bool drawTriangle = true;
+  ImVec4 TriangleColor = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+  glUseProgram(shaderProgram);
+  GLint uColorLoc = glGetUniformLocation(shaderProgram, "uColor");
+
+
   while(!glfwWindowShouldClose(window)) {
     // 处理输入
     processInput(window);
@@ -127,14 +150,35 @@ int main() {
     glClearColor(0.2f, 0.3f, 0.3f, .4f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    glUseProgram(shaderProgram);
-    glBindVertexArray(VAO);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+
+
+    if (drawTriangle) {
+      glUseProgram(shaderProgram);
+      glUniform4fv(uColorLoc, 1, (float*) &TriangleColor);
+      glBindVertexArray(VAO);
+      glDrawArrays(GL_TRIANGLES, 0, 3);
+    }
+
+    ImGui::Begin("My name is window, ImGUI window");
+    ImGui::Checkbox("Draw Triangle", &drawTriangle);
+    ImGui::ColorEdit4("Color", (float *)&TriangleColor);
+    ImGui::End();
+
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 
     // 交换buffer
     glfwSwapBuffers(window);
     glfwPollEvents();
   }
+
+  ImGui_ImplOpenGL3_Shutdown();
+  ImGui_ImplGlfw_Shutdown();
+  ImGui::DestroyContext();
 
   glDeleteVertexArrays(1, &VAO);
   glDeleteBuffers(1, &VBO);
