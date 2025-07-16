@@ -3,10 +3,26 @@ project(OpenGL)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+# glfw
+option(GLFW_BUILD_DOCS OFF)
+option(GLFW_BUILD_EXAMPLES OFF)
+option(GLFW_BUILD_TESTS OFF)
+add_subdirectory(3rdparty/glfw)
+
+#glm
+option(GLM_ENABLE_CXX_17 ON)
+add_subdirectory(3rdparty/glm)
+
+
+# include directories
+include_directories(
+    3rdparty/glfw/include
+    3rdparty/glfw/glm
+)
+
 if (WIN32)
     include_directories(${PROJECT_SOURCE_DIR}/include)
     include_directories(${PROJECT_SOURCE_DIR}/src)
-    link_directories(${PROJECT_SOURCE_DIR}/lib)
 else()
     include_directories(/opt/homebrew/include)
     include_directories(${PROJECT_SOURCE_DIR}/include)
@@ -21,20 +37,22 @@ aux_source_directory(${PROJECT_SOURCE_DIR}/src/imgui imgui)
 
 
 
-
 file(GLOB CHR1 ${PROJECT_SOURCE_DIR}/src/01_Start/*.cpp)
 foreach (file ${CHR1})
     string(REGEX REPLACE ".*/(.+)\\.cpp" "\\1" exe ${file})
     message(exe: ${exe})
-    add_executable(${exe} ${file} ${GLAD_SRC} ${utils} ${SRC} ${imgui})
-    # target_link_libraries(${exe} glfw3)
-    target_link_libraries(${exe} glfw3 
-        "-framework Cocoa"
-        "-framework CoreFoundation"
-        "-framework IOKit"
-        "-framework CoreVideo"
-    )
+    add_executable(${exe} ${file} ${GLAD_SRC} ${utils} ${SRC} ${imgui} ${IMGUI_OPENGL})
 
+    if (WIN32)
+        target_link_libraries(${exe} glfw glm)
+    else()
+        target_link_libraries(${exe} glfw 
+            "-framework Cocoa"
+            "-framework CoreFoundation"
+            "-framework IOKit"
+            "-framework CoreVideo"
+        )
+    endif()
 endforeach ()
 
 
@@ -44,12 +62,17 @@ foreach (file2 ${CHR2})
     string(REGEX REPLACE ".*/(.+)\\.cpp" "\\1" exe2 ${file2})
     message(exe: ${exe2})
     add_executable(${exe2} ${file2} ${GLAD_SRC} ${utils} ${imgui})
-    target_link_libraries(${exe2} glfw3 
-        "-framework Cocoa"
-        "-framework CoreFoundation"
-        "-framework IOKit"
-        "-framework CoreVideo"
-    )
+
+    if (WIN32)
+        target_link_libraries(${exe2} glfw glm)
+    else()
+        target_link_libraries(${exe2} glfw 
+            "-framework Cocoa"
+            "-framework CoreFoundation"
+            "-framework IOKit"
+            "-framework CoreVideo"
+        )
+    endif()
 endforeach ()
 
 
