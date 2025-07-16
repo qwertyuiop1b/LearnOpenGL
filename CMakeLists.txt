@@ -13,39 +13,42 @@ add_subdirectory(3rdparty/glfw)
 option(GLM_ENABLE_CXX_17 ON)
 add_subdirectory(3rdparty/glm)
 
+#glad soruce code
+set(GLAD_SRC 3rdparty/glad/src/glad.c)
+
 
 # include directories
 include_directories(
     3rdparty/glfw/include
-    3rdparty/glfw/glm
+    3rdparty/glad/include
+    3rdparty/glm
 )
 
 if (WIN32)
     include_directories(${PROJECT_SOURCE_DIR}/include)
     include_directories(${PROJECT_SOURCE_DIR}/src)
-else()
+elseif(APPLE)
     include_directories(/opt/homebrew/include)
     include_directories(${PROJECT_SOURCE_DIR}/include)
     include_directories(${PROJECT_SOURCE_DIR}/src)
     link_directories(/opt/homebrew/lib)
 endif()
 
-set(GLAD_SRC ${PROJECT_SOURCE_DIR}/src/glad.c)
 
+# source code
 aux_source_directory(${PROJECT_SOURCE_DIR}/src/utils utils)
 aux_source_directory(${PROJECT_SOURCE_DIR}/src/imgui imgui)
-
 
 
 file(GLOB CHR1 ${PROJECT_SOURCE_DIR}/src/01_Start/*.cpp)
 foreach (file ${CHR1})
     string(REGEX REPLACE ".*/(.+)\\.cpp" "\\1" exe ${file})
     message(exe: ${exe})
-    add_executable(${exe} ${file} ${GLAD_SRC} ${utils} ${SRC} ${imgui} ${IMGUI_OPENGL})
+    add_executable(${exe} ${file} ${utils} ${SRC} ${imgui} ${IMGUI_OPENGL} ${GLAD_SRC})
 
     if (WIN32)
         target_link_libraries(${exe} glfw glm)
-    else()
+    elseif(APPLE)
         target_link_libraries(${exe} glfw 
             "-framework Cocoa"
             "-framework CoreFoundation"
@@ -56,7 +59,6 @@ foreach (file ${CHR1})
 endforeach ()
 
 
-
 file(GLOB CHR2 ${PROJECT_SOURCE_DIR}/src/02_Light/*.cpp)
 foreach (file2 ${CHR2})
     string(REGEX REPLACE ".*/(.+)\\.cpp" "\\1" exe2 ${file2})
@@ -65,7 +67,7 @@ foreach (file2 ${CHR2})
 
     if (WIN32)
         target_link_libraries(${exe2} glfw glm)
-    else()
+    elseif(APPLE)
         target_link_libraries(${exe2} glfw 
             "-framework Cocoa"
             "-framework CoreFoundation"
