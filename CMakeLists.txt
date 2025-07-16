@@ -3,6 +3,14 @@ project(OpenGL)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+# include directories
+include_directories(
+    3rdparty/glfw/include
+    3rdparty/glad/include
+    3rdparty/glm
+)
+
+
 # glfw
 option(GLFW_BUILD_DOCS OFF)
 option(GLFW_BUILD_EXAMPLES OFF)
@@ -13,16 +21,13 @@ add_subdirectory(3rdparty/glfw)
 option(GLM_ENABLE_CXX_17 ON)
 add_subdirectory(3rdparty/glm)
 
+#imgui
+add_subdirectory(3rdparty/imgui)
+
 #glad soruce code
 set(GLAD_SRC 3rdparty/glad/src/glad.c)
 
 
-# include directories
-include_directories(
-    3rdparty/glfw/include
-    3rdparty/glad/include
-    3rdparty/glm
-)
 
 if (WIN32)
     include_directories(${PROJECT_SOURCE_DIR}/include)
