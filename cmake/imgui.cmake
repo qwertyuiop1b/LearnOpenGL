@@ -1,21 +1,24 @@
 cmake_minimum_required(VERSION 3.10)
 
+set(IMGUI_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/imgui)
+message(Using ImGui from: ${IMGUI_DIR})
+
 # ImGui 核心文件
 set(IMGUI_SOURCES
-    imgui.cpp
-    imgui_demo.cpp
-    imgui_draw.cpp
-    imgui_tables.cpp
-    imgui_widgets.cpp
+    ${IMGUI_DIR}/imgui.cpp
+    ${IMGUI_DIR}/imgui_demo.cpp
+    ${IMGUI_DIR}/imgui_draw.cpp
+    ${IMGUI_DIR}/imgui_tables.cpp
+    ${IMGUI_DIR}/imgui_widgets.cpp
 )
 
 set(IMGUI_HEADERS
-    imgui.h
-    imgui_internal.h
-    imconfig.h
-    imstb_rectpack.h
-    imstb_textedit.h
-    imstb_truetype.h
+    ${IMGUI_DIR}/imgui.h
+    ${IMGUI_DIR}/imgui_internal.h
+    ${IMGUI_DIR}/imconfig.h
+    ${IMGUI_DIR}/imstb_rectpack.h
+    ${IMGUI_DIR}/imstb_textedit.h
+    ${IMGUI_DIR}/imstb_truetype.h
 )
 
 # 创建 ImGui 核心库
@@ -23,7 +26,7 @@ add_library(imgui STATIC ${IMGUI_SOURCES} ${IMGUI_HEADERS})
 
 # 设置包含目录
 target_include_directories(imgui PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${IMGUI_DIR}
 )
 
 # 编译选项
@@ -46,20 +49,20 @@ option(IMGUI_BUILD_DX11_BACKEND "Build DirectX11 backend" OFF)
 # GLFW + OpenGL3 后端
 if(IMGUI_BUILD_GLFW_BACKEND AND IMGUI_BUILD_OPENGL3_BACKEND)
     set(IMGUI_BACKEND_SOURCES
-        backends/imgui_impl_glfw.cpp
-        backends/imgui_impl_opengl3.cpp
+        ${IMGUI_DIR}/backends/imgui_impl_glfw.cpp
+        ${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp
     )
     
     set(IMGUI_BACKEND_HEADERS
-        backends/imgui_impl_glfw.h
-        backends/imgui_impl_opengl3.h
+        ${IMGUI_DIR}/backends/imgui_impl_glfw.h
+        ${IMGUI_DIR}/backends/imgui_impl_opengl3.h
     )
     
     add_library(imgui_glfw_opengl3 STATIC ${IMGUI_BACKEND_SOURCES} ${IMGUI_BACKEND_HEADERS})
     target_link_libraries(imgui_glfw_opengl3 PUBLIC imgui)
     target_include_directories(imgui_glfw_opengl3 PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}
-        ${CMAKE_CURRENT_SOURCE_DIR}/backends
+        ${IMGUI_DIR}
+        ${IMGUI_DIR}/backends
     )
 endif()
 
