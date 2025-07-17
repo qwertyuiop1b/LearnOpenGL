@@ -43,7 +43,7 @@ int main() {
     glViewport(0, 0, 800, 600);
 
 
-
+    long long int count = 0;
     while (!glfwWindowShouldClose(window)) {
         // handle input
         process_input(window);
@@ -54,6 +54,11 @@ int main() {
 
         glfwSwapBuffers(window);
         glfwPollEvents();
+
+        count++;
+        std::cout << "\rcount: ";
+        std::cout << count << std::flush;  // resize window not print
+        
     }
     glfwTerminate();
     return 0;

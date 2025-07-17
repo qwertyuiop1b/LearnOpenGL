@@ -3,9 +3,8 @@
 ### 创建窗口
 #### GLFW 
 - A multi-platform library for OpenGL, OpenGL ES, Vulkan, window and input
-- 使用git submodule添加到项目
 ```cmake
-// sh
+// sh 使用git submodule添加到项目
 git submodule add git@github.com:glfw/glfw.git 3rdparty/glfw
 
 // CMakeLists
@@ -16,6 +15,7 @@ add_subdirectory(3rdparty/glfw)
 
 ```
 #### GLAD
+- 
 
 ### Hello Window
 

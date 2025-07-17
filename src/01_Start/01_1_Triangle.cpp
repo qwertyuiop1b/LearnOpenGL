@@ -91,6 +91,7 @@ int main() {
   glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
   if (!success) {
     glGetProgramInfoLog(shaderProgram, 512, nullptr, infoLog);
+    std::cout << "ERROR:PROGRAM::LINK\n" << infoLog << std::endl;
   }
 
   // 链接完成可以删除shader
@@ -114,7 +115,7 @@ int main() {
   // 传递到GPU中
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
   // 顶点属性以什么方式解析获取数据
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float),nullptr);
   // 激活顶点属性
   glEnableVertexAttribArray(0);
   // 解绑
@@ -122,14 +123,12 @@ int main() {
   glBindVertexArray(0);
 
 
-
-
   while(!glfwWindowShouldClose(window)) {
     // 处理输入
     processInput(window);
 
     // 渲染
-    glClearColor(0.2f, 0.3f, 0.3f, .4f);
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glUseProgram(shaderProgram);
     glBindVertexArray(VAO);
@@ -139,8 +138,6 @@ int main() {
     glfwSwapBuffers(window);
     glfwPollEvents();
   }
-
-
 
   glDeleteVertexArrays(1, &VAO);
   glDeleteBuffers(1, &VBO);
