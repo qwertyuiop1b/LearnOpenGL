@@ -1,23 +1,16 @@
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <cmath>
 
-
-#define MATRICES_LOCATION 1
-#define NUM_INSTANCES 1000
-
-const float M_PI = 3.1415926;
 const unsigned int WIDTH = 800;
 const unsigned int HEIGHT = 600;
 
 const char* vertexShaderSource = R"(
 #version 330 core
 layout(location = 0) in vec3 aPos;
-layout(location = 1) in mat4 aMatrix;
 
 void main() {
-  gl_Position = aMatrix * vec4(aPos, 1.0);
+  gl_Position = vec4(aPos, 1.0);
 }
 )";
 
@@ -104,15 +97,16 @@ int main() {
   glDeleteShader(vertexShader);
   glDeleteShader(fragmentShader);
 
-  float vertices[9] = {-0.2f, -0.3f, 0.0f,
-                      0.2f, -0.3f, 0.0f,
-                      0.0f,  0.3f, 0.0f };
+  float vertices[] = {
+    -0.5f, -0.5f, 0.0f,
+    0.5f, -0.5f, 0.0f,
+    0.0f, 0.5f, 0.0f,
+  };
 
   // CPU --> GPU   vertices => vertices buffer
-  unsigned int VBO, VAO, MBO;
+  unsigned int VBO, VAO;
   glGenVertexArrays(1, &VAO);
   glGenBuffers(1, &VBO);
-  glGenBuffers(1, &MBO);
 
   glBindVertexArray(VAO);
   // 指定Buffer的类型 GL_ARRAY_BUFFER
@@ -125,33 +119,6 @@ int main() {
   glEnableVertexAttribArray(0);
   // 解绑
   glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-
-  glBindBuffer(GL_ARRAY_BUFFER, MBO);
-  // initialize model transform
-  float mat[NUM_INSTANCES * 16];
-  for (int matrix_id = 0; matrix_id < NUM_INSTANCES; matrix_id++) {
-    float pos_x = 0.002f *  matrix_id * cos(40*M_PI*matrix_id / NUM_INSTANCES);
-    float pos_y = 0.002f *  matrix_id * sin(40*M_PI*matrix_id / NUM_INSTANCES);
-    float scale = 0.0004f * matrix_id;
-
-    int i = 16 * matrix_id;
-    mat[i+0]  = scale; mat[i+4] = 0.0f;  mat[i+8]  = 0.0f;  mat[i+12] = pos_x; 
-    mat[i+1]  = 0.0f;  mat[i+5] = scale; mat[i+9]  = 0.0f;  mat[i+13] = pos_y; 
-    mat[i+2]  = 0.0f;  mat[i+6] = 0.0f;  mat[i+10] = scale; mat[i+14] = 0.0f; 
-    mat[i+3] =  0.0f;  mat[i+7] = 0.0f;  mat[i+11] = 0.0f;  mat[i+15] = 1.0f; 
-  }
-  glBufferData(GL_ARRAY_BUFFER, sizeof(mat), mat, GL_DYNAMIC_DRAW);
-
-
-  for (unsigned int i = 0; i < 4; i++) {
-    glEnableVertexAttribArray(MATRICES_LOCATION + i);
-    glVertexAttribPointer(MATRICES_LOCATION + i, 4, GL_FLOAT, GL_FALSE, 16 * sizeof(float), (void*)(sizeof(float) * i * 4));
-    glVertexAttribDivisor(MATRICES_LOCATION + i, 1);
-  }
-
-
-
   glBindVertexArray(0);
 
 
@@ -166,8 +133,7 @@ int main() {
     glClear(GL_COLOR_BUFFER_BIT);
     glUseProgram(shaderProgram);
     glBindVertexArray(VAO);
-    // glDrawArrays(GL_TRIANGLES, 0, 3);
-    glDrawArraysInstanced(GL_TRIANGLES, 0, 3, NUM_INSTANCES);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
 
     // 交换buffer
     glfwSwapBuffers(window);
