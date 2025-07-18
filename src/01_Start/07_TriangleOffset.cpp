@@ -2,6 +2,8 @@
 #include <GLFW/glfw3.h>
 #include "utils/Shader.h"
 #include <iostream>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 const unsigned int WIDTH = 800;
 const unsigned int HEIGHT = 600;
@@ -30,8 +32,8 @@ int main() {
     return -1;
   }
 
-  const char* vertexPath = "../shaders/01_shaders/01_07_TriangleOffset_vs.glsl";
-  const char* fragmentPath = "../shaders/01_shaders/01_07_TriangleOffset_fs.glsl";
+  const char* vertexPath = "shaders/01_shaders/01_07_TriangleOffset_vs.glsl";
+  const char* fragmentPath = "shaders/01_shaders/01_07_TriangleOffset_fs.glsl";
   Shader shader(vertexPath, fragmentPath);
 
   // 创建顶点数据和颜色
@@ -68,10 +70,13 @@ int main() {
 
     shader.use();
     auto time = static_cast<float>(glfwGetTime());
-    shader.setFloat2("offset", 0.3f * sin(time), 0.3f * cos(time));
+
+    glm::mat4 rotate = glm::rotate(glm::mat4(1.f), time, glm::vec3(0.f, 0.f, 1.0f));
+
+    // shader.setFloat2("offset", 0.3f * sin(time), 0.3f * cos(time));
+    shader.setMatrix4("rotateMatrix", rotate);
     glBindVertexArray(VAO);
     glDrawArrays(GL_TRIANGLES, 0, 3);
-
     glfwSwapBuffers(window);
     glfwPollEvents();
   }

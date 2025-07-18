@@ -5,14 +5,13 @@ layout(location = 1) in vec3 aColor;
 
 out vec3 outColor;
 
-uniform vec2 offset;
+// uniform vec2 offset;
 // todo
-//uniform mat3 rotateMatrix;
+uniform mat4 rotateMatrix;
 
 
 void main() {
-    vec3 position = vec3(aPos.xy + offset, 0.);
-//    positon = rotateMatrix * position;
-    gl_Position = vec4(position, 1.0);
+    // vec3 position = vec3(aPos.xy + offset, 0.);
+    gl_Position = rotateMatrix * vec4(aPos, 1.0);
     outColor = aColor;
 }
