@@ -9,6 +9,7 @@ include_directories(
     3rdparty/glfw/include
     3rdparty/glad/include
     3rdparty/glm
+    3rdparty/stb
 )
 
 

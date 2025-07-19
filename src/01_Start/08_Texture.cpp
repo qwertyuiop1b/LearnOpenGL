@@ -32,12 +32,12 @@ int main() {
     return -1;
   }
 
-  const char* vertexPath = "../shaders/01_shaders/01_08_Texture_vs.glsl";
-  const char* fragmentPath = "../shaders/01_shaders/01_08_Texture_fs.glsl";
+  const char* vertexPath = "shaders/01_shaders/01_08_Texture_vs.glsl";
+  const char* fragmentPath = "shaders/01_shaders/01_08_Texture_fs.glsl";
   Shader shader(vertexPath, fragmentPath);
 
   int width, height, nrChannels;
-  unsigned char* data = stbi_load("../textures/container.jpg", &width, &height, &nrChannels, 0);
+  unsigned char* data = stbi_load("textures/container.jpg", &width, &height, &nrChannels, 0);
   if (!data) {
     std::cout << "not found file" << std::endl;
   }

@@ -36,13 +36,13 @@ int main() {
     return -1;
   }
 
-  const char* vertexPath = "../shaders/01_shaders/01_09_MultTexture_vs.glsl";
-  const char* fragmentPath = "../shaders/01_shaders/01_09_MultTexture_fs.glsl";
+  const char* vertexPath = "shaders/01_shaders/01_09_MultTexture_vs.glsl";
+  const char* fragmentPath = "shaders/01_shaders/01_09_MultTexture_fs.glsl";
   Shader shader(vertexPath, fragmentPath);
 
   stbi_set_flip_vertically_on_load(true);
   int width, height, nrChannels;
-  unsigned char* data = stbi_load("../textures/container.jpg", &width, &height, &nrChannels, 0);
+  unsigned char* data = stbi_load("textures/container.jpg", &width, &height, &nrChannels, 0);
   std::cout << "nrChannels: " << nrChannels << std::endl;
   if (!data) {
     std::cout << "load failed" << std::endl;
@@ -57,7 +57,7 @@ int main() {
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
   stbi_image_free(data);
 
-  data = stbi_load("../textures/awesomeface.png", &width, &height, &nrChannels, 0);
+  data = stbi_load("textures/awesomeface.png", &width, &height, &nrChannels, 0);
   std::cout << "nrChannels: " << nrChannels << std::endl;
   if (!data) {
     std::cout << "load awesomeface.png failed" << std::endl;

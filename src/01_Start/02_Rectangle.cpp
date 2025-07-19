@@ -139,7 +139,7 @@ int main() {
     const uint32_t image_height = 1080;
     const uint32_t size = image_width * image_height * 3 / 2;
 
-    std::ifstream file("../textures/dump_out_raw_image_nv12_1920x1080.yuv", std::ios::in | std::ios::binary);
+    std::ifstream file("textures/dump_out_raw_image_nv12_1920x1080.yuv", std::ios::in | std::ios::binary);
     if (!file.is_open()) {
         std::cerr << "ERROR: Could not open file " << std::endl;
     }
