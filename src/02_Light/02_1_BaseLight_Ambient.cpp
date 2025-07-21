@@ -14,7 +14,7 @@ void scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
 
 // Camera
-Camera camera(glm::vec3(0.0f, 0.0f, 6.0f));
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 float lastX = WIDTH / 2.0f;
 float lastY = HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -25,7 +25,7 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 // lighting
-glm::vec3 lightPos(0.f, 1.5f, 0.f);
+glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 
 
 int main() {
@@ -37,78 +37,29 @@ int main() {
   GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "02_BaseLight", nullptr, nullptr);
   if (!window) {
     std::cout << "Failed to create window" << std::endl;
+    glfwTerminate();
     return -1;
   }
 
   glfwMakeContextCurrent(window);
   glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
+  glfwSetCursorPosCallback(window, mouseCallback);
+  glfwSetScrollCallback(window, scrollCallback);
 
   if (!gladLoadGLLoader(GLADloadproc(glfwGetProcAddress))) {
     std::cout << "Failed to load gl" << std::endl;
+    glfwTerminate();
     return -1;
   }
 
   // 环境光
-  const char* vertexPath1 = "shaders/02_shaders/02_01_Color_vs.glsl";
-  const char* fragmentPath1 = "shaders/02_shaders/02_02_BaseLight_Ambient_fs.glsl";
-
-  // 漫反射
-  const char* vertexPath2 = "shaders/02_shaders/02_02_BaseLight_Diffuse_vs.glsl";
-  const char* fragmentPath2 = "shaders/02_shaders/02_02_BaseLight_Diffuse_fs.glsl";
-
-  // 高光
-  const char* vertexPath = "shaders/02_shaders/02_02_BaseLight_Specular_vs.glsl";
-  const char* fragmentPath = "shaders/02_shaders/02_02_BaseLight_Specular_fs.glsl";
+  const char* vertexPath = "shaders/02_shaders/02_01_Color_vs.glsl";
+  const char* fragmentPath = "shaders/02_shaders/02_02_BaseLight_Ambient_fs.glsl";
 
   const char* lightFragmentPath = "shaders/02_shaders/02_01_Color_Light_fs.glsl";
 
   Shader shader(vertexPath, fragmentPath);
   Shader lightShader(vertexPath, lightFragmentPath);
-
-  // 立方体顶点数据
-//  float vertices[] = {
-//    -0.5f, -0.5f, -0.5f,
-//    0.5f, -0.5f, -0.5f,
-//    0.5f,  0.5f, -0.5f,
-//    0.5f,  0.5f, -0.5f,
-//    -0.5f,  0.5f, -0.5f,
-//    -0.5f, -0.5f, -0.5f,
-//
-//    -0.5f, -0.5f,  0.5f,
-//    0.5f, -0.5f,  0.5f,
-//    0.5f,  0.5f,  0.5f,
-//    0.5f,  0.5f,  0.5f,
-//    -0.5f,  0.5f,  0.5f,
-//    -0.5f, -0.5f,  0.5f,
-//
-//    -0.5f,  0.5f,  0.5f,
-//    -0.5f,  0.5f, -0.5f,
-//    -0.5f, -0.5f, -0.5f,
-//    -0.5f, -0.5f, -0.5f,
-//    -0.5f, -0.5f,  0.5f,
-//    -0.5f,  0.5f,  0.5f,
-//
-//    0.5f,  0.5f,  0.5f,
-//    0.5f,  0.5f, -0.5f,
-//    0.5f, -0.5f, -0.5f,
-//    0.5f, -0.5f, -0.5f,
-//    0.5f, -0.5f,  0.5f,
-//    0.5f,  0.5f,  0.5f,
-//
-//    -0.5f, -0.5f, -0.5f,
-//    0.5f, -0.5f, -0.5f,
-//    0.5f, -0.5f,  0.5f,
-//    0.5f, -0.5f,  0.5f,
-//    -0.5f, -0.5f,  0.5f,
-//    -0.5f, -0.5f, -0.5f,
-//
-//    -0.5f,  0.5f, -0.5f,
-//    0.5f,  0.5f, -0.5f,
-//    0.5f,  0.5f,  0.5f,
-//    0.5f,  0.5f,  0.5f,
-//    -0.5f,  0.5f,  0.5f,
-//    -0.5f,  0.5f, -0.5f,
-//  };
 
 
   // 顶点和法线

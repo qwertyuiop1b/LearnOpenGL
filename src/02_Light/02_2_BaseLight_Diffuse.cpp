@@ -14,7 +14,7 @@ void scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
 
 // Camera
-Camera camera(glm::vec3(0.0f, 0.0f, 6.0f));
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 float lastX = WIDTH / 2.0f;
 float lastY = HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -34,7 +34,7 @@ int main() {
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-  GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "01_Color", nullptr, nullptr);
+  GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "02_BaseLight", nullptr, nullptr);
   if (!window) {
     std::cout << "Failed to create window" << std::endl;
     glfwTerminate();
@@ -52,56 +52,59 @@ int main() {
     return -1;
   }
 
-  const char* vertexPath = "shaders/02_shaders/02_01_Color_vs.glsl";
-  const char* fragmentPath = "shaders/02_shaders/02_01_Color_fs.glsl";
+  // 环境光
+  const char* vertexPath = "shaders/02_shaders/02_02_BaseLight_Diffuse_vs.glsl";
+  const char* fragmentPath = "shaders/02_shaders/02_02_BaseLight_Diffuse_fs.glsl";
+
   const char* lightFragmentPath = "shaders/02_shaders/02_01_Color_Light_fs.glsl";
 
-  Shader lightingShader(vertexPath, fragmentPath);
-  Shader lightCubeShader(vertexPath, lightFragmentPath);
+  Shader shader(vertexPath, fragmentPath);
+  Shader lightShader(vertexPath, lightFragmentPath);
 
 
+  // 顶点和法线
   float vertices[] = {
-    -0.5f, -0.5f, -0.5f,
-    0.5f, -0.5f, -0.5f,
-    0.5f,  0.5f, -0.5f,
-    0.5f,  0.5f, -0.5f,
-    -0.5f,  0.5f, -0.5f,
-    -0.5f, -0.5f, -0.5f,
+    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+    0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+    0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+    0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
 
-    -0.5f, -0.5f,  0.5f,
-    0.5f, -0.5f,  0.5f,
-    0.5f,  0.5f,  0.5f,
-    0.5f,  0.5f,  0.5f,
-    -0.5f,  0.5f,  0.5f,
-    -0.5f, -0.5f,  0.5f,
+    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+    0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+    0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+    0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
 
-    -0.5f,  0.5f,  0.5f,
-    -0.5f,  0.5f, -0.5f,
-    -0.5f, -0.5f, -0.5f,
-    -0.5f, -0.5f, -0.5f,
-    -0.5f, -0.5f,  0.5f,
-    -0.5f,  0.5f,  0.5f,
+    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
 
-    0.5f,  0.5f,  0.5f,
-    0.5f,  0.5f, -0.5f,
-    0.5f, -0.5f, -0.5f,
-    0.5f, -0.5f, -0.5f,
-    0.5f, -0.5f,  0.5f,
-    0.5f,  0.5f,  0.5f,
+    0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+    0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+    0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+    0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+    0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+    0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
 
-    -0.5f, -0.5f, -0.5f,
-    0.5f, -0.5f, -0.5f,
-    0.5f, -0.5f,  0.5f,
-    0.5f, -0.5f,  0.5f,
-    -0.5f, -0.5f,  0.5f,
-    -0.5f, -0.5f, -0.5f,
+    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+    0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+    0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+    0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
 
-    -0.5f,  0.5f, -0.5f,
-    0.5f,  0.5f, -0.5f,
-    0.5f,  0.5f,  0.5f,
-    0.5f,  0.5f,  0.5f,
-    -0.5f,  0.5f,  0.5f,
-    -0.5f,  0.5f, -0.5f,
+    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+    0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+    0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+    0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
   };
 
 
@@ -111,15 +114,17 @@ int main() {
   glGenBuffers(1, &VBO);
   glBindBuffer(GL_ARRAY_BUFFER, VBO);
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-  glVertexAttribPointer(0, 3, GL_FLOAT, false, 3 * sizeof(float), (void *) 0);
+  glVertexAttribPointer(0, 3, GL_FLOAT, false, 6 * sizeof(float), (void *) 0);
   glEnableVertexAttribArray(0);
+  glVertexAttribPointer(1, 3, GL_FLOAT, false, 6 * sizeof(float), (void *) (3 * sizeof(float)));
+  glEnableVertexAttribArray(1);
   glBindVertexArray(0);
 
   unsigned int lightVAO;
   glGenVertexArrays(1, &lightVAO);
   glBindVertexArray(lightVAO);
   glBindBuffer(GL_ARRAY_BUFFER, VBO);
-  glVertexAttribPointer(0, 3, GL_FLOAT, false, 3 * sizeof(float), (void *)0);
+  glVertexAttribPointer(0, 3, GL_FLOAT, false, 6 * sizeof(float), (void *)0);
   glEnableVertexAttribArray(0);
   glBindVertexArray(0);
 
@@ -135,29 +140,29 @@ int main() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-    lightingShader.use();
-    lightingShader.setFloat3("objectColor", 1.0f, 0.5f, 0.31f);
-    lightingShader.setFloat3("lightColor", 1.0f, 1.0f, 1.0f);
+    shader.use();
+    shader.setFloat3("objectColor", 1.0f, 0.5f, 0.31f);
+    shader.setFloat3("lightColor", 1.0f, 1.0f, 1.0f);
+    shader.setFloat3("lightPos", lightPos);
+    shader.setFloat3("viewPos", camera.Position);
     glm::mat4 projectionMatrix = glm::perspective(glm::radians(camera.Zoom), float(WIDTH)/float(HEIGHT), 0.1f, 100.0f);
     glm::mat4 viewMatrix = camera.GetViewMatrix();
-    lightingShader.setMatrix4("projectionMatrix", projectionMatrix);
-    lightingShader.setMatrix4("viewMatrix", viewMatrix);
-
+    shader.setMatrix4("projectionMatrix", projectionMatrix);
+    shader.setMatrix4("viewMatrix", viewMatrix);
     glm::mat4 modelMatrix = glm::mat4(1.0f);
-    lightingShader.setMatrix4("modelMatrix", modelMatrix);
+    modelMatrix = glm::rotate(modelMatrix, glm::radians(60.0f), glm::vec3(1.0f, 1.0f, 0.0f));
 
+    shader.setMatrix4("modelMatrix", modelMatrix);
     glBindVertexArray(VAO);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
-    lightCubeShader.use();
-    lightCubeShader.setMatrix4("projectionMatrix", projectionMatrix);
-    lightCubeShader.setMatrix4("viewMatrix", viewMatrix);
-
+    lightShader.use();
+    lightShader.setMatrix4("projectionMatrix", projectionMatrix);
+    lightShader.setMatrix4("viewMatrix", viewMatrix);
     modelMatrix = glm::mat4(1.0f);
     modelMatrix = glm::translate(modelMatrix, lightPos);
     modelMatrix = glm::scale(modelMatrix, glm::vec3(0.2f));
-    lightCubeShader.setMatrix4("modelMatrix", modelMatrix);
-
+    lightShader.setMatrix4("modelMatrix", modelMatrix);
     glBindVertexArray(lightVAO);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 

@@ -14,7 +14,7 @@ void scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
 
 // Camera
-Camera camera(glm::vec3(0.0f, 0.0f, 6.0f));
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 float lastX = WIDTH / 2.0f;
 float lastY = HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -25,7 +25,7 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 // lighting
-glm::vec3 lightPos(0.f, 1.5f, 0.f);
+glm::vec3 lightPos(0.3f, 0.5f, 2.0f);
 
 
 int main() {
@@ -37,14 +37,18 @@ int main() {
   GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "02_BaseLight", nullptr, nullptr);
   if (!window) {
     std::cout << "Failed to create window" << std::endl;
+    glfwTerminate();
     return -1;
   }
 
   glfwMakeContextCurrent(window);
   glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
+  glfwSetCursorPosCallback(window, mouseCallback);
+  glfwSetScrollCallback(window, scrollCallback);
 
   if (!gladLoadGLLoader(GLADloadproc(glfwGetProcAddress))) {
     std::cout << "Failed to load gl" << std::endl;
+    glfwTerminate();
     return -1;
   }
 
@@ -138,9 +142,6 @@ int main() {
     shader.use();
     shader.setFloat3("objectColor", 1.0f, 0.5f, 0.31f);
     shader.setFloat3("lightColor", 1.0f, 1.0f, 1.0f);
-    lightPos.x = 3.0f * sin(currentFrame);
-    lightPos.y = 1.5f + 3.0f * cos(currentFrame);
-    lightPos.z = 0;
     shader.setFloat3("lightPos", lightPos);
     shader.setFloat3("viewPos", camera.Position);
     glm::mat4 projectionMatrix = glm::perspective(glm::radians(camera.Zoom), float(WIDTH)/float(HEIGHT), 0.1f, 100.0f);
@@ -148,8 +149,6 @@ int main() {
     shader.setMatrix4("projectionMatrix", projectionMatrix);
     shader.setMatrix4("viewMatrix", viewMatrix);
     glm::mat4 modelMatrix = glm::mat4(1.0f);
-    modelMatrix = glm::rotate(modelMatrix, glm::radians(60.0f), glm::vec3(1.0f, 1.0f, 0.0f));
-
     shader.setMatrix4("modelMatrix", modelMatrix);
     glBindVertexArray(VAO);
     glDrawArrays(GL_TRIANGLES, 0, 36);
