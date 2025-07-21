@@ -5,9 +5,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "utils/Shader.h"
+#include "utils/stb_define.h"
 
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
 
 const unsigned int WIDTH = 800;
 const unsigned int HEIGHT = 600;

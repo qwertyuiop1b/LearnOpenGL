@@ -1,8 +1,9 @@
 #include "Texture.h"
 #include <iostream>
 // Include 
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+// #ifndef STB_IMAGE_IMPLEMENTATION
+// #define STB_IMAGE_IMPLEMENTATION
+#include "stb_define.h"
 
 Texture::Texture(): textureId(0), width(0), height(0), channels(0), format(GL_RGB) {
 
@@ -82,7 +83,7 @@ bool Texture::loadFromFile(const std::string& filepath) {
 }
 
 
-bool Texture::createFromData(unsigned char* data, int w, int h, int ch) {
+bool Texture::createFromData(const unsigned char* data, int w, int h, int ch) {
     // Create texture from raw data
     if (!data) {
         std::cerr << "Invalid data provided to createFromData" << std::endl;
@@ -141,7 +142,7 @@ void Texture::unbind() const {
 
 
 // Set texture parameters
-void Texture::setParameter(GLenum parameter, GLint value) {
+void Texture::setParameter(GLenum parameter, GLuint value) {
     glBindTexture(GL_TEXTURE_2D, textureId);
     glTexParameteri(GL_TEXTURE_2D, parameter, value);
     glBindTexture(GL_TEXTURE_2D, 0);

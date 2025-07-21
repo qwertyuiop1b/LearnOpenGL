@@ -54,15 +54,15 @@ foreach (file ${CHR1})
     message(exe: ${exe})
     add_executable(${exe} ${file} ${utils} ${GLAD_SRC})
 
-    if (WIN32)
-        target_link_libraries(${exe} glfw glm ${IMGUI_LIB})
-    elseif(APPLE)
+    if (APPLE)
         target_link_libraries(${exe} glfw glm ${IMGUI_LIB}
             "-framework Cocoa"
             "-framework CoreFoundation"
             "-framework IOKit"
             "-framework CoreVideo"
         )
+    elseif(WIN32 OR UNIX)
+        target_link_libraries(${exe} glfw glm ${IMGUI_LIB})
     endif()
 endforeach ()
 
@@ -74,15 +74,15 @@ foreach (file2 ${CHR2})
     message(exe: ${exe2})
     add_executable(${exe2} ${file2} ${utils} ${GLAD_SRC})
 
-    if (WIN32)
-        target_link_libraries(${exe2} glfw glm ${IMGUI_LIB})
-    elseif(APPLE)
+    if (APPLE)
         target_link_libraries(${exe2} glfw glm ${IMGUI_LIB}
             "-framework Cocoa"
             "-framework CoreFoundation"
             "-framework IOKit"
             "-framework CoreVideo"
         )
+    elseif(WIN32 OR UNIX)
+        target_link_libraries(${exe2} glfw glm ${IMGUI_LIB})
     endif()
 endforeach ()
 

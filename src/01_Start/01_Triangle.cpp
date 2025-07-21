@@ -7,7 +7,6 @@
 #define MATRICES_LOCATION 1
 #define NUM_INSTANCES 1000
 
-const float M_PI = 3.1415926;
 const unsigned int WIDTH = 800;
 const unsigned int HEIGHT = 600;
 

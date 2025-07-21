@@ -2,9 +2,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "utils/Shader.h"
-
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
+#include "utils/stb_define.h"
 
 
 float mixLevel = 0.2f;

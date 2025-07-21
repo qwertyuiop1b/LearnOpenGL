@@ -4,6 +4,8 @@
 #### GLFW 
 - A multi-platform library for OpenGL, OpenGL ES, Vulkan, window and input
 ```cmake
+// 更新子模块
+git submodule update --init --recursive
 // sh 使用git submodule添加到项目
 git submodule add git@github.com:glfw/glfw.git 3rdparty/glfw
 
