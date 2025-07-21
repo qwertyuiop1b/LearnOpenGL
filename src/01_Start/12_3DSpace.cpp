@@ -5,9 +5,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "utils/Shader.h"
+#include "utils/stb_define.h"
 
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
 
 const unsigned int WIDTH = 800;
 const unsigned int HEIGHT = 600;
@@ -39,15 +38,15 @@ int main() {
     return -1;
   }
 
-  const char* vertPath = "../shaders/01_shaders/01_12_3DSpace_vs.glsl";
-  const char* fragmentPath = "../shaders/01_shaders/01_12_3DSpace_fs.glsl";
+  const char* vertPath = "shaders/01_shaders/01_12_3DSpace_vs.glsl";
+  const char* fragmentPath = "shaders/01_shaders/01_12_3DSpace_fs.glsl";
   Shader shader(vertPath, fragmentPath);
 
 
   stbi_set_flip_vertically_on_load(true);
   // 加载贴图
   int width, height, nrChannels;
-  unsigned char* data = stbi_load("../textures/container.jpg", &width, &height, &nrChannels, 0);
+  unsigned char* data = stbi_load("textures/container.jpg", &width, &height, &nrChannels, 0);
   if (!data) {
     std::cout << "load failed" << std::endl;
   }
@@ -64,7 +63,7 @@ int main() {
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
   stbi_image_free(data);
 
-  unsigned char* data2 = stbi_load("../textures/awesomeface.png", &width, &height, &nrChannels, 0);
+  unsigned char* data2 = stbi_load("textures/awesomeface.png", &width, &height, &nrChannels, 0);
   if (!data2) {
     std::cout << "load failed 2" <<std::endl;
   }
@@ -122,15 +121,14 @@ int main() {
   glm::mat4 viewMatrix(1.0f);
   viewMatrix = glm::translate(viewMatrix, glm::vec3(0.0f, 0.0f, -3.0f));
 
-
   glm::mat4 projectionMatrix(1.0f);
+
+  unsigned int modelMatrixLoc = glGetUniformLocation(shader.ID, "modelMatrix");
+  unsigned int viewMatrixLoc = glGetUniformLocation(shader.ID, "viewMatrix");
 
   shader.use();
   shader.setInt("img1", 0);
   shader.setInt("img2", 1);
-
-
-
 
   while(!glfwWindowShouldClose(window)) {
     processInput(window);
@@ -143,14 +141,10 @@ int main() {
     glBindTexture(GL_TEXTURE_2D, texture2);
     shader.use();
     projectionMatrix = glm::perspective(glm::radians(45.0f), float(actualWidth) / float(actualHeight), 0.1f, 100.0f);
-    unsigned int modelMatrixLoc = glGetUniformLocation(shader.ID, "modelMatrix");
-    unsigned int viewMatrixLoc = glGetUniformLocation(shader.ID, "viewMatrix");
-
     // 3种方法
     glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
     glUniformMatrix4fv(viewMatrixLoc, 1, GL_FALSE, &viewMatrix[0][0]);
     shader.setMatrix4("projectionMatrix", projectionMatrix);
-
 
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -158,9 +152,6 @@ int main() {
     glfwPollEvents();
 
   }
-
-
-
 
   return 0;
 }

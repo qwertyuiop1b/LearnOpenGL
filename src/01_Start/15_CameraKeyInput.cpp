@@ -7,8 +7,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "utils/Shader.h"
 
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
+#include "utils/stb_define.h"
 
 const unsigned int WIDTH = 800;
 const unsigned int HEIGHT = 600;
