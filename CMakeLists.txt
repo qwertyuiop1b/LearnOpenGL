@@ -10,6 +10,8 @@ include_directories(
     3rdparty/glad/include
     3rdparty/glm
     3rdparty/stb
+    3rdparty/imgui
+    3rdparty/imgui/backends
 )
 
 
