@@ -53,8 +53,8 @@ int main() {
     return -1;
   }
 
-  const char* vertPath = "../shaders/01_shaders/01_12_3DSpace_vs.glsl";
-  const char* fragmentPath = "../shaders/01_shaders/01_12_3DSpace_fs.glsl";
+  const char* vertPath = "shaders/01_shaders/01_12_3DSpace_vs.glsl";
+  const char* fragmentPath = "shaders/01_shaders/01_12_3DSpace_fs.glsl";
   Shader shader(vertPath, fragmentPath);
 
 

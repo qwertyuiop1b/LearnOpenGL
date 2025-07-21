@@ -10,6 +10,10 @@
 const unsigned int WIDTH = 800;
 const unsigned int HEIGHT = 600;
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 const char* vertexShaderSource = R"(
 #version 330 core
 layout(location = 0) in vec3 aPos;

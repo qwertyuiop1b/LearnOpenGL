@@ -37,8 +37,8 @@ int main() {
     return -1;
   }
 
-  const char* vertPath = "../shaders/01_shaders/01_10_Transformation_vs.glsl";
-  const char* fragmentPath = "../shaders/01_shaders/01_10_Transformation_fs.glsl";
+  const char* vertPath = "shaders/01_shaders/01_10_Transformation_vs.glsl";
+  const char* fragmentPath = "shaders/01_shaders/01_10_Transformation_fs.glsl";
   Shader shader(vertPath, fragmentPath);
 
 

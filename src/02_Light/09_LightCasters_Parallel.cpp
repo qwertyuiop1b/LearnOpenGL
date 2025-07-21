@@ -53,8 +53,8 @@ int main() {
     return -1;
   }
 
-  const char* vertexPath = "../shaders/02_shaders/02_06_LightingMaps_vs.glsl";
-  const char* fragmentPath = "../shaders/02_shaders/02_09_LightCasters_Parallel_fs.glsl";
+  const char* vertexPath = "shaders/02_shaders/02_06_LightingMaps_vs.glsl";
+  const char* fragmentPath = "shaders/02_shaders/02_09_LightCasters_Parallel_fs.glsl";
 
   Shader shader(vertexPath, fragmentPath);
 

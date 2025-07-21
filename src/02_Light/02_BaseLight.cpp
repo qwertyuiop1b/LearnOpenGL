@@ -49,18 +49,18 @@ int main() {
   }
 
   // 环境光
-  const char* vertexPath1 = "../shaders/02_shaders/02_01_Color_vs.glsl";
-  const char* fragmentPath1 = "../shaders/02_shaders/02_02_BaseLight_Ambient_fs.glsl";
+  const char* vertexPath1 = "shaders/02_shaders/02_01_Color_vs.glsl";
+  const char* fragmentPath1 = "shaders/02_shaders/02_02_BaseLight_Ambient_fs.glsl";
 
   // 漫反射
-  const char* vertexPath2 = "../shaders/02_shaders/02_02_BaseLight_Diffuse_vs.glsl";
-  const char* fragmentPath2 = "../shaders/02_shaders/02_02_BaseLight_Diffuse_fs.glsl";
+  const char* vertexPath2 = "shaders/02_shaders/02_02_BaseLight_Diffuse_vs.glsl";
+  const char* fragmentPath2 = "shaders/02_shaders/02_02_BaseLight_Diffuse_fs.glsl";
 
   // 高光
-  const char* vertexPath = "../shaders/02_shaders/02_02_BaseLight_Specular_vs.glsl";
-  const char* fragmentPath = "../shaders/02_shaders/02_02_BaseLight_Specular_fs.glsl";
+  const char* vertexPath = "shaders/02_shaders/02_02_BaseLight_Specular_vs.glsl";
+  const char* fragmentPath = "shaders/02_shaders/02_02_BaseLight_Specular_fs.glsl";
 
-  const char* lightFragmentPath = "../shaders/02_shaders/02_01_Color_Light_fs.glsl";
+  const char* lightFragmentPath = "shaders/02_shaders/02_01_Color_Light_fs.glsl";
 
   Shader shader(vertexPath, fragmentPath);
   Shader lightShader(vertexPath, lightFragmentPath);

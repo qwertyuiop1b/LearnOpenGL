@@ -48,10 +48,10 @@ int main() {
     return -1;
   }
 
-  const char* vertexPath = "../shaders/02_shaders/02_05_Material_vs.glsl";
-  const char* fragmentPath = "../shaders/02_shaders/02_05_Material_fs.glsl";
+  const char* vertexPath = "shaders/02_shaders/02_05_Material_vs.glsl";
+  const char* fragmentPath = "shaders/02_shaders/02_05_Material_fs.glsl";
 
-  const char* lightFragmentPath = "../shaders/02_shaders/02_01_Color_Light_fs.glsl";
+  const char* lightFragmentPath = "shaders/02_shaders/02_01_Color_Light_fs.glsl";
 
   Shader shader(vertexPath, fragmentPath);
   Shader lightShader(vertexPath, lightFragmentPath);
