@@ -3,7 +3,6 @@
 #include <GLFW/glfw3.h>
 
 #include "glm/fwd.hpp"
-#include "glm/gtc/type_ptr.hpp"
 #include "utils/Shader.h"
 #include "utils/Camera.h"
 #include <imgui.h>
@@ -33,6 +32,9 @@ float lastFrame = 0.0f;
 // lighting
 glm::vec3 lightPos(0.3f, 0.5f, 2.0f);
 
+// imgui status
+bool imguiWantsMouse = false;
+bool isHovered = true;
 
 int main() {
   glfwInit();
@@ -70,8 +72,8 @@ int main() {
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
   ImGuiIO& io = ImGui::GetIO();
-  io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-  io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+//   io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+//   io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
   ImGui::StyleColorsDark();
   ImGui_ImplGlfw_InitForOpenGL(window, true);
   ImGui_ImplOpenGL3_Init("#version 330");
@@ -166,6 +168,9 @@ int main() {
     ImGui::SliderInt("shineness", &shininess, 2, 512);
     ImGui::End();
     ImGui::Render();
+    ImGuiIO& io = ImGui::GetIO();
+    imguiWantsMouse = io.WantCaptureMouse;
+    isHovered = glfwGetWindowAttrib(window, GLFW_HOVERED);
 
     shader.use();
     shader.setFloat3("objectColor", 1.0f, 0.5f, 0.31f);
@@ -226,18 +231,23 @@ void processInput(GLFWwindow *window) {
 }
 
 void mouseCallback(GLFWwindow* window, double xposIn, double yposIn){
-  auto xpos = static_cast<float>(xposIn);
-  auto ypos = static_cast<float>(yposIn);
-  if (firstMouse) {
+    if (imguiWantsMouse || !isHovered) {
+        firstMouse = true;
+        return;
+    };
+
+    auto xpos = static_cast<float>(xposIn);
+    auto ypos = static_cast<float>(yposIn);
+    if (firstMouse) {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
+    float xoffset = xpos - lastX;
+    float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
     lastX = xpos;
     lastY = ypos;
-    firstMouse = false;
-  }
-  float xoffset = xpos - lastX;
-  float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
-  lastX = xpos;
-  lastY = ypos;
-  camera.ProcessMouseMovement(xoffset, yoffset);
+    camera.ProcessMouseMovement(xoffset, yoffset);
 }
 
 void scrollCallback(GLFWwindow* window, double xoffset, double yoffset){
