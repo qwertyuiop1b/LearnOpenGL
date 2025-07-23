@@ -2,6 +2,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include "utils/stb_define.h"
 #include "utils/Shader.h"
 #include "utils/Camera.h"
 #include "utils/Texture.h"

@@ -17,15 +17,16 @@ private:
     int width, height, channels;
     GLenum format;
     TextureType type = TextureType::DIFFUSE;
+    std::string path;
 
 public:
     Texture();
 
     ~Texture();
 
-    Texture(const Texture&) = delete;
+    Texture(const Texture&) = default;
 
-    Texture& operator=(const Texture&) = delete;
+    Texture& operator=(const Texture&) = default;
 
     Texture(Texture&& other) noexcept;
 
@@ -43,6 +44,7 @@ public:
 
     void setParameter(GLenum parameter, GLfloat value);
 
+    void setType(TextureType type);
 
     GLuint getId() const { return textureId; }
     int getWidth() const { return width; }
@@ -50,6 +52,7 @@ public:
     int getChannles() const { return channels; }
     GLenum getFormat() const { return format; }
     TextureType getType() const { return type; }
+    std::string getPath() const { return path; }
     bool isValid() const { return textureId != 0; }
 
 

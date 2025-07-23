@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 #include <assimp/scene.h>
+#include <assimp/Importer.hpp>
+#include <assimp/postprocess.h>
 
 #include "utils/Mesh.h"
 #include "utils/Shader.h"
@@ -24,7 +26,7 @@ private:
 
     Mesh processMesh(aiMesh *mesh, const aiScene *scene);
 
-    std::vector<Texture> loadMaterialTextures(aiMaterial *mat, aiTextureType type, const std::string& typeName);
+    std::vector<Texture> loadMaterialTextures(aiMaterial *mat, aiTextureType type, TextureType textureType);
 };
 
 #endif

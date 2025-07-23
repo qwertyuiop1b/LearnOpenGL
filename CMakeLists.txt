@@ -34,6 +34,9 @@ set(IMGUI_LIB imgui imgui_glfw_opengl3) # cmake/imgui.cmake will create these ta
 
 
 #assimp
+option(ASSIMP_BUILD_ASSIMP_TOOLS OFF)
+option(ASSIMP_BUILD_SAMPLES OFF)
+option(ASSIMP_BUILD_TESTS OFF)
 add_subdirectory(3rdparty/assimp)
 # todo copy assimp generate header file to src/include
 
@@ -48,6 +51,7 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/src
     ${PROJECT_SOURCE_DIR}/src/include
 )
+
 
 
 
@@ -84,6 +88,25 @@ foreach (file2 ${CHR2})
 
     if (APPLE)
         target_link_libraries(${exe2} glfw glm assimp ${IMGUI_LIB}
+            "-framework Cocoa"
+            "-framework CoreFoundation"
+            "-framework IOKit"
+            "-framework CoreVideo"
+        )
+    elseif(WIN32 OR UNIX)
+        target_link_libraries(${exe2} glfw glm assimp ${IMGUI_LIB})
+    endif()
+endforeach ()
+
+
+file(GLOB CHR3 ${PROJECT_SOURCE_DIR}/src/03_ModelLoading/*.cpp)
+foreach (file2 ${CHR3})
+    string(REGEX REPLACE ".*/(.+)\\.cpp" "\\1" exe2 ${file2})
+    message(exe: ${exe2})
+    add_executable(${exe2} ${file2} ${utils} ${GLAD_SRC})
+
+    if (APPLE)
+        target_link_libraries(${exe2} glfw glm assimp::assimp ${IMGUI_LIB}
             "-framework Cocoa"
             "-framework CoreFoundation"
             "-framework IOKit"
