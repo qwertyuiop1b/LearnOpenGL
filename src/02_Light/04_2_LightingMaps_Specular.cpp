@@ -62,8 +62,8 @@ int main() {
   Shader lightShader(vertexPath, lightFragmentPath);
 
   // load texture
-  const char* texturePath = "../textures/container2.png";
-  const char* textureSpecularPath = "../textures/container2_specular.png";
+  const char* texturePath = "textures/container2.png";
+  const char* textureSpecularPath = "textures/container2_specular.png";
   unsigned int textureId = loadTexture(texturePath);
   unsigned int textureSpecId = loadTexture(textureSpecularPath);
 
