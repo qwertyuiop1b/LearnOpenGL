@@ -12,6 +12,7 @@ include_directories(
     3rdparty/stb
     3rdparty/imgui
     3rdparty/imgui/backends
+    3rdparty/assimp/include
 )
 
 
@@ -32,6 +33,11 @@ include(cmake/imgui.cmake)
 set(IMGUI_LIB imgui imgui_glfw_opengl3) # cmake/imgui.cmake will create these targets
 
 
+#assimp
+add_subdirectory(3rdparty/assimp)
+# todo copy assimp generate header file to src/include
+
+
 #glad soruce code
 set(GLAD_SRC 3rdparty/glad/src/glad.c)
 
@@ -39,8 +45,8 @@ set(GLAD_SRC 3rdparty/glad/src/glad.c)
 
 # source code include directories
 include_directories(
-    ${PROJECT_SOURCE_DIR}/include
     ${PROJECT_SOURCE_DIR}/src
+    ${PROJECT_SOURCE_DIR}/src/include
 )
 
 
@@ -77,14 +83,14 @@ foreach (file2 ${CHR2})
     add_executable(${exe2} ${file2} ${utils} ${GLAD_SRC})
 
     if (APPLE)
-        target_link_libraries(${exe2} glfw glm ${IMGUI_LIB}
+        target_link_libraries(${exe2} glfw glm assimp ${IMGUI_LIB}
             "-framework Cocoa"
             "-framework CoreFoundation"
             "-framework IOKit"
             "-framework CoreVideo"
         )
     elseif(WIN32 OR UNIX)
-        target_link_libraries(${exe2} glfw glm ${IMGUI_LIB})
+        target_link_libraries(${exe2} glfw glm assimp ${IMGUI_LIB})
     endif()
 endforeach ()
 
