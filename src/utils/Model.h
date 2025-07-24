@@ -19,7 +19,7 @@ public:
 private:
     std::string directory;
     std::vector<Mesh> meshes;
-    std::vector<Texture> textures_loaded;
+    std::vector<Texture2D> textures_loaded;
 
     void loadModel(const char *path);
 
@@ -27,7 +27,7 @@ private:
 
     Mesh processMesh(aiMesh *mesh, const aiScene *scene);
 
-    std::vector<Texture> loadMaterialTextures(aiMaterial *mat, aiTextureType type, TextureType textureType);
+    std::vector<Texture2D> loadMaterialTextures(aiMaterial *mat, aiTextureType type, const std::string& typeName);
 };
 
 #endif
