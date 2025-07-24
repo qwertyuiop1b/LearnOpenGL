@@ -4,10 +4,10 @@
 #include <string>
 
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures) {
-    this->vertices = std::move(vertices);
-    this->indices = std::move(indices);
-    this->textures = std::move(textures);
+Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const std::vector<Texture>& textures) {
+    this->vertices = vertices;
+    this->indices = indices;
+    this->textures = textures;
 
     setupMesh();
 }
@@ -25,27 +25,30 @@ void Mesh::draw(Shader& shader) {
      * uniform texture_...
      *
     */
-
     unsigned int diffuseNr = 1;
     unsigned int specularNr = 1;
 
     std::string name;
     for (unsigned int i = 0; i < textures.size(); i++) {
+        glActiveTexture(GL_TEXTURE0 + i);
         auto type = textures[i].getType();
         if (type == TextureType::DIFFUSE) {
-            name = "material.diffuse" + std::to_string(diffuseNr++);
+            name = "texture_diffuse" + std::to_string(diffuseNr++);
+
+            std::cout << "has texture diffuse: " << name << " size: " << textures.size() << " id: " << textures[i].getId() << std::endl;
         } else if (type == TextureType::SPECULAR) {
-            name ="material.spcular" + std::to_string(specularNr++);
+            name ="texture_spcular" + std::to_string(specularNr++);
         }
         shader.setInt(name, i);
-        textures[i].bind(i);
+        glBindTexture(GL_TEXTURE_2D, textures[i].getId());
     }
-    // reset active texture unit 0
-    glActiveTexture(GL_TEXTURE0);
 
     glBindVertexArray(vao);
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
+
+    // reset active texture unit 0
+    glActiveTexture(GL_TEXTURE0);
 }
 
 void Mesh::setupMesh() {

@@ -8,6 +8,7 @@
 #include "glm/fwd.hpp"
 #include "utils/Mesh.h"
 #include "utils/Texture.h"
+#include <cstring>
 #include <iterator>
 #include <string>
 #include <utility>
@@ -60,10 +61,10 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene) {
     for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
         Vertex vertex;
 
-        vertex.position = glm::vec3(mesh->mVertices->x, mesh->mVertices->y, mesh->mVertices->z);
+        vertex.position = glm::vec3(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z);
 
         if (mesh->HasNormals()) {
-            vertex.normal = glm::vec3(mesh->mNormals->x, mesh->mNormals->y, mesh->mNormals->z);
+            vertex.normal = glm::vec3(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z);
         }
 
         if (mesh->HasTextureCoords(0)) {
@@ -86,13 +87,13 @@ Mesh Model::processMesh(aiMesh *mesh, const aiScene *scene) {
     // textures
     aiMaterial *material = scene->mMaterials[mesh->mMaterialIndex];
     std::vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, TextureType::DIFFUSE);
-    textures.insert(textures.end(), std::make_move_iterator(diffuseMaps.begin()), std::make_move_iterator(diffuseMaps.end()));
-    std::vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, TextureType::SPECULAR);
-    textures.insert(textures.end(), std::make_move_iterator(specularMaps.begin()), std::make_move_iterator(specularMaps.end()));
-    std::vector<Texture> normalMaps = loadMaterialTextures(material, aiTextureType_NORMALS, TextureType::NORMAL);
-    textures.insert(textures.end(), std::make_move_iterator(normalMaps.begin()), std::make_move_iterator(normalMaps.end()));
+    textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
+    // std::vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, TextureType::SPECULAR);
+    // textures.insert(textures.end(), std::make_move_iterator(specularMaps.begin()), std::make_move_iterator(specularMaps.end()));
+    // std::vector<Texture> normalMaps = loadMaterialTextures(material, aiTextureType_NORMALS, TextureType::NORMAL);
+    // textures.insert(textures.end(), std::make_move_iterator(normalMaps.begin()), std::make_move_iterator(normalMaps.end()));
 
-    return Mesh(std::move(vertices), std::move(indices), std::move(textures));
+    return Mesh(vertices, indices, textures);
 }
 
 std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, TextureType textureType) {
@@ -100,11 +101,24 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType 
     for (unsigned int i = 0; i < mat->GetTextureCount(type); i++) {
         aiString str;
         mat->GetTexture(type, i, &str);
+        bool skip = false;
 
-        Texture texture;
-        texture.setType(textureType);
-        texture.loadFromFile(directory + "/" + str.C_Str());
-        textures.push_back(std::move(texture));
+        for (unsigned int j = 0; j < textures_loaded.size(); j++) {
+            if (std::strcmp(textures_loaded[j].getPath().c_str(), str.C_Str()) == 0) {
+                textures.push_back(textures_loaded[j]);
+                skip = true;
+                break;
+            }
+        }
+
+        if (!skip) {
+            Texture texture;
+            texture.setType(textureType);
+            texture.loadFromFile(directory + "/" + str.C_Str());
+
+            textures_loaded.push_back(texture);
+            textures.push_back(texture);
+        }
 
     }
     return textures;

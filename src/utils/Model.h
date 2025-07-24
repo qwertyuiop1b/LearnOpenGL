@@ -19,6 +19,7 @@ public:
 private:
     std::string directory;
     std::vector<Mesh> meshes;
+    std::vector<Texture> textures_loaded;
 
     void loadModel(const char *path);
 

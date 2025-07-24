@@ -15,28 +15,29 @@ Texture::~Texture() {
     }
 }
 
-Texture::Texture(Texture&& other) noexcept : textureId(other.textureId), width(other.width), height(other.height), channels(other.channels), format(other.format){
-    other.textureId = 0;
-}
+// Texture::Texture(Texture&& other) noexcept : textureId(other.textureId), width(other.width), height(other.height), channels(other.channels), format(other.format){
+//     other.textureId = 0;
+// }
 
-Texture& Texture::operator=(Texture&& other) noexcept {
-    if (this != &other) {
-        if (textureId != 0) {
-            glDeleteTextures(1, &textureId);
-        }
-        textureId = other.textureId;
-        width = other.width;
-        height = other.height;
-        channels = other.channels;
-        format = other.format;
-        other.textureId = 0;
-    }
-    return *this;
-}
+// Texture& Texture::operator=(Texture&& other) noexcept {
+//     if (this != &other) {
+//         if (textureId != 0) {
+//             glDeleteTextures(1, &textureId);
+//         }
+//         textureId = other.textureId;
+//         width = other.width;
+//         height = other.height;
+//         channels = other.channels;
+//         format = other.format;
+//         other.textureId = 0;
+//     }
+//     return *this;
+// }
 
 bool Texture::loadFromFile(const std::string& filepath) {
     stbi_set_flip_vertically_on_load(true);
-    path = filepath;
+    path = filepath.substr(filepath.find_last_of('/') + 1);
+    std::cout << "Path: " << path << std::endl;
     std::cout << "LoadTexture From Path: " << filepath << std::endl;
     unsigned char* data = stbi_load(filepath.c_str(), &width, &height, &channels, 0);
     if (!data) {

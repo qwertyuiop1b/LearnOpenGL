@@ -24,13 +24,13 @@ public:
 
     ~Texture();
 
-    Texture(const Texture&) = default;
+    // Texture(const Texture&) = default;
 
-    Texture& operator=(const Texture&) = default;
+    // Texture& operator=(const Texture&) = default;
 
-    Texture(Texture&& other) noexcept;
+    // Texture(Texture&& other) noexcept;
 
-    Texture& operator=(Texture&& other) noexcept;
+    // Texture& operator=(Texture&& other) noexcept;
 
     bool loadFromFile(const std::string& filepath);
 
