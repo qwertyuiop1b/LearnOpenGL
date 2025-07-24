@@ -1,6 +1,7 @@
 .vscode/
 .idea/
 .exe
+.DS_Store
 .[cC]ache
 
 [bB]uild/

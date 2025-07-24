@@ -53,8 +53,6 @@ include_directories(
 )
 
 
-
-
 # source code
 aux_source_directory(${PROJECT_SOURCE_DIR}/src/utils utils)
 
@@ -67,14 +65,14 @@ foreach (file ${CHR1})
     add_executable(${exe} ${file} ${utils} ${GLAD_SRC})
 
     if (APPLE)
-        target_link_libraries(${exe} glfw glm ${IMGUI_LIB}
+        target_link_libraries(${exe} glfw glm assimp::assimp ${IMGUI_LIB}
             "-framework Cocoa"
             "-framework CoreFoundation"
             "-framework IOKit"
             "-framework CoreVideo"
         )
     elseif(WIN32 OR UNIX)
-        target_link_libraries(${exe} glfw glm ${IMGUI_LIB})
+        target_link_libraries(${exe} glfw glm assimp::assimp ${IMGUI_LIB})
     endif()
 endforeach ()
 
@@ -87,14 +85,14 @@ foreach (file2 ${CHR2})
     add_executable(${exe2} ${file2} ${utils} ${GLAD_SRC})
 
     if (APPLE)
-        target_link_libraries(${exe2} glfw glm assimp ${IMGUI_LIB}
+        target_link_libraries(${exe2} glfw glm assimp::assimp ${IMGUI_LIB}
             "-framework Cocoa"
             "-framework CoreFoundation"
             "-framework IOKit"
             "-framework CoreVideo"
         )
     elseif(WIN32 OR UNIX)
-        target_link_libraries(${exe2} glfw glm assimp ${IMGUI_LIB})
+        target_link_libraries(${exe2} glfw glm assimp::assimp ${IMGUI_LIB})
     endif()
 endforeach ()
 
@@ -113,7 +111,7 @@ foreach (file2 ${CHR3})
             "-framework CoreVideo"
         )
     elseif(WIN32 OR UNIX)
-        target_link_libraries(${exe2} glfw glm assimp ${IMGUI_LIB})
+        target_link_libraries(${exe2} glfw glm assimp::assimp ${IMGUI_LIB})
     endif()
 endforeach ()
 
