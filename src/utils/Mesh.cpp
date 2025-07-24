@@ -34,7 +34,6 @@ void Mesh::draw(Shader& shader) {
         auto type = textures[i].type;
         if (type == "texture_diffuse") {
             name = "texture_diffuse" + std::to_string(diffuseNr++);
-            std::cout << "has texture diffuse: " << name << " size: " << textures.size() << " id: " << textures[i].id << std::endl;
         } else if (type == "texture_spcular") {
             name ="texture_spcular" + std::to_string(specularNr++);
         }
