@@ -3,9 +3,9 @@
 #include <iostream>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
-    
+
     glViewport(0, 0, width, height);
-    // main rendering 
+    // main rendering
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glfwSwapBuffers(window);
@@ -26,7 +26,7 @@ int main() {
 #ifdef __APPLE__
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
-    GLFWwindow* window = glfwCreateWindow(800, 600, "00_Window", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(800, 600, "1_00_Window", nullptr, nullptr);
     if (window == nullptr) {
         std::cout << "Failed to create glfw window" << std::endl;
         glfwTerminate();
@@ -58,7 +58,7 @@ int main() {
         count++;
         std::cout << "\rcount: ";
         std::cout << count << std::flush;  // resize window not print
-        
+
     }
     glfwTerminate();
     return 0;
