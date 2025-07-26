@@ -1,13 +1,17 @@
 #include "Application.h"
-
+#include "GLFW/glfw3.h"
 #include <assert.h>
 #include <stdexcept>
-#include <iostream>
+
 
 
 Application::Application(unsigned int width, unsigned int height, const std::string& title)
-    : mWidth(width), mHeight(height), mTitle(title), mWindow(nullptr), mIsRunning(false) {
+    : mWidth(width), mHeight(height), mTitle(title), mWindow(nullptr) {
 
+}
+
+Application::~Application() {
+    cleanup();
 }
 
 void Application::init(unsigned int glVersionMajor, unsigned int glVersionMinor) {
@@ -15,7 +19,9 @@ void Application::init(unsigned int glVersionMajor, unsigned int glVersionMinor)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, glVersionMajor);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, glVersionMinor);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
+#ifdef __APPLE__
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
     mWindow = glfwCreateWindow(mWidth, mHeight, mTitle.c_str(), nullptr, nullptr);
     if (mWindow == nullptr) {
         cleanup();
@@ -25,29 +31,31 @@ void Application::init(unsigned int glVersionMajor, unsigned int glVersionMinor)
     glfwMakeContextCurrent(mWindow);
     // Set the window pointer for callbacks
     glfwSetWindowUserPointer(mWindow, this);
+    glfwSetKeyCallback(mWindow, keyCallbackWrapper);
+    glfwSetFramebufferSizeCallback(mWindow, framebufferSizeCallbackWrapper);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         cleanup();
         throw std::runtime_error("Failed to initialize GLAD");
     }
-    mIsRunning = true;
 }
 
 void Application::run() {
-    while(mIsRunning) {
+    while(!glfwWindowShouldClose(mWindow)) {
         render();
         update();
     }
 }
 
-void Application::render() {
-
+void Application::requestExit() {
+    glfwSetWindowShouldClose(mWindow, true);
 }
 
-void Application::checkIsRunning() {
+void Application::render() {}
+
+void Application::checkIsRequestExit() {
     if (glfwGetKey(mWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(mWindow, true);
-        requestExit();
     }
 }
 
@@ -70,7 +78,7 @@ void Application::cleanup() {
 void Application::keyCallbackWrapper(GLFWwindow* window, int key, int scancode, int action, int mods) {
     Application* app = static_cast<Application*>(glfwGetWindowUserPointer(window));
     if (app) {
-        std::cout << "Get Application Instance Successfully" << std::endl;
+        app->checkIsRequestExit();
     }
 }
 
