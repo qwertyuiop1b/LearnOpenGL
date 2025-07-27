@@ -1,6 +1,7 @@
 #include "utils/VertexArray.h"
 #include "VertexArray.h"
 #include "VertexBuffer.h"
+#include "utils/Application.h"
 #include <utility>
 #include <vector>
 #include <iostream>
@@ -8,8 +9,6 @@
 
 
 VertexArray::VertexArray(): mId(0), mIndexBufferBound(false), mVboIds() {
-    glGenVertexArrays(1, &mId);
-    std::cout << "Create Vertex Array";
 }
 
 VertexArray::~VertexArray() {
@@ -34,6 +33,10 @@ VertexArray& VertexArray::operator=(VertexArray&& other) noexcept {
         other.mId = 0;
     }
     return *this;
+}
+
+void VertexArray::create() {
+    glGenVertexArrays(1, &mId);
 }
 
 void VertexArray::bind() const {

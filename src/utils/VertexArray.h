@@ -23,7 +23,7 @@ struct VertexAttribute {
 
 class VertexArray {
 private:
-    GLuint mId;
+    unsigned int mId;
     bool mIndexBufferBound;
     std::vector<GLuint> mVboIds;
 public:
@@ -35,7 +35,7 @@ public:
 
     VertexArray(VertexArray&& other) noexcept;
     VertexArray& operator=(VertexArray&& other) noexcept;
-
+    void create();
     void bind() const;
     void unbind() const;
 
