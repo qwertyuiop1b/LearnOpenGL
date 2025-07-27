@@ -28,7 +28,7 @@ private:
 
     void beforeRender() {
         // create shader from file
-        rectShader.loadFromfile("shaders/01_shaders/01_01_Rectangle.vert", "shaders/01_shaders/01_01_Rectangle.frag");
+        rectShader.loadFromfile("shaders/01_shaders/1_1_2_Rectangle.vert", "shaders/01_shaders/1_1_2_Rectangle.frag");
         // create vao vbo ebo
         float vertices[] {
             // top left
@@ -82,7 +82,7 @@ private:
 };
 
 int main() {
-    RectangleApp app(800, 600, "1_01_2_Rectangle");
+    RectangleApp app(800, 600, "1_1_2_Rectangle");
     app.run();
     return 0;
 }
