@@ -116,3 +116,21 @@ foreach (file2 ${CHR3})
 endforeach ()
 
 
+file(GLOB CHR4 ${PROJECT_SOURCE_DIR}/src/04_AdvancedOpenGL/*.cpp)
+foreach (file4 ${CHR4})
+    string(REGEX REPLACE ".*/(.+)\\.cpp" "\\1" exe4 ${file4})
+    message(exe: ${exe4})
+    add_executable(${exe4} ${file4} ${utils} ${GLAD_SRC})
+
+    if (APPLE)
+        target_link_libraries(${exe4} glfw glm assimp::assimp ${IMGUI_LIB}
+            "-framework Cocoa"
+            "-framework CoreFoundation"
+            "-framework IOKit"
+            "-framework CoreVideo"
+        )
+    elseif(WIN32 OR UNIX)
+        target_link_libraries(${exe4} glfw glm assimp::assimp ${IMGUI_LIB})
+    endif()
+endforeach ()
+
