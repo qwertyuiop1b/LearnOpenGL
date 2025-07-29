@@ -29,6 +29,8 @@ public:
 
     unsigned int getHeight() const { return mHeight; }
 
+    GLFWwindow* getWindow() const { return mWindow; }
+
 protected:
     void init(unsigned int glVersionMajor = 3, unsigned int glVersionMinor = 3);
 
