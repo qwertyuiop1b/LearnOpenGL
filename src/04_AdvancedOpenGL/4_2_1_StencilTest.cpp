@@ -1,4 +1,5 @@
 #include "glm/fwd.hpp"
+#include "glm/trigonometric.hpp"
 #include "utils/Application.h"
 #include "utils/OribitCamera.h"
 #include "utils/Shader.h"
@@ -10,13 +11,13 @@
 
 
 
-class DepthTest: public Application {
+class StencilTest: public Application {
 public:
     bool dragging = false;
     double lastX, lastY;
     double curX, curY;
 
-    DepthTest(unsigned int width, unsigned int height, const std::string& title): Application(width, height, title) {
+    StencilTest(unsigned int width, unsigned int height, const std::string& title): Application(width, height, title) {
         init();
         setup();
         lastX = width / 2.0;
@@ -24,6 +25,10 @@ public:
 
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
+
+        glEnable(GL_STENCIL_TEST);
+        glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
     }
 
     virtual void render() override {
@@ -45,15 +50,35 @@ public:
         }
 
         glClearColor(0.2f, 0.3f, 0.2f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-        // cube
-        shader.use();
-        glm::mat4  model = glm::mat4(1.0f);
+        // single color shader use to set uniform
+        singleColorShader.use();
+        glm::mat4 model = glm::mat4(1.0f);
         glm::mat4 view = camera.getViewMatrix();
         glm::mat4 projection = glm::perspective(glm::radians(45.0f), static_cast<float>(getWidth()) / static_cast<float>(getHeight()), 0.1f, 100.0f);
+        singleColorShader.setMatrix4("view", view);
+        singleColorShader.setMatrix4("projection", projection);
+
+        // shader use to set uniform
+        shader.use();
         shader.setMatrix4("view", view);
         shader.setMatrix4("projection", projection);
+
+        // disable stencil buffer writing
+        glStencilMask(0x00);
+        // draw floor
+        planeVao.bind();
+        planeTexture.bind();
+        shader.setMatrix4("model",model);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        planeVao.unbind();
+
+        // enable stencil buffer writing
+        glStencilMask(0xFF);
+        glStencilFunc(GL_ALWAYS, 1, 0xFF); // always pass stencil test, write 1 to stencil buffer
+        glStencilMask(0xFF);
+
         cubeVao.bind();
         cubeTexture.bind();
         model = glm::translate(model, glm::vec3(-1.f, 0.f, -1.f));
@@ -66,18 +91,35 @@ public:
         glDrawArrays(GL_TRIANGLES, 0, 36);
         cubeVao.unbind();
 
-        // floor
-        planeVao.bind();
-        planeTexture.bind();
+
+        // draw cube outline
+        glStencilFunc(GL_NOTEQUAL, 1, 0xFF); // only draw where stencil value is not equal to 1
+        glStencilMask(0x00); // disable writing to stencil buffer
+        glDisable(GL_DEPTH_TEST); // disable depth test so that the outline is drawn on top of the cubes
+        singleColorShader.use();
+        float scale = 1.1f;
+        cubeVao.bind();
         model = glm::mat4(1.0f);
-        shader.setMatrix4("model", model);
-        glDrawArrays(GL_TRIANGLES, 0, 6);
-        planeVao.unbind();
+        model = glm::translate(model, glm::vec3(-1.f, 0.f, -1.f));
+        model = glm::scale(model, glm::vec3(scale, scale, scale));
+        singleColorShader.setMatrix4("model", model);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(2.f, 0.f, 0.f));
+        model = glm::scale(model, glm::vec3(scale, scale, scale));
+        singleColorShader.setMatrix4("model", model);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        cubeVao.unbind();
 
 
+        glEnable(GL_DEPTH_TEST); // re-enable depth test
+        glStencilMask(0xFF); // re-enable writing to stencil buffer
+        glStencilFunc(GL_ALWAYS, 0, 0xFF); // reset stencil function
     }
 private:
     Shader shader;
+    Shader singleColorShader;
 
     VertexArray cubeVao;
     VertexArray planeVao;
@@ -170,7 +212,8 @@ private:
         planeVbo.unbind();
 
         // shader
-        shader.loadFromfile("shaders/04_shaders/4_1_1_depth_test.vert", "shaders/04_shaders/4_1_1_depth_test.frag");
+        shader.loadFromfile("shaders/04_shaders/4_2_1_stencil_test.vert", "shaders/04_shaders/4_2_1_stencil_test.frag");
+        singleColorShader.loadFromfile("shaders/04_shaders/4_2_1_stencil_single_color.vert", "shaders/04_shaders/4_2_1_stencil_single_color.frag");
 
         // load textures;
         cubeTexture.loadFromFile("textures/marble.jpg");
@@ -182,7 +225,7 @@ private:
 };
 
 int main() {
-    DepthTest app(800, 600, "depth test");
+    StencilTest app(800, 600, "stencil test");
     app.run();
     return 0;
 }

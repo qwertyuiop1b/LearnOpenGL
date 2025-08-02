@@ -37,3 +37,7 @@ add_subdirectory(3rdparty/glfw)
 azimuth angle: rotation angle around Y axis; meaning left or right
 polar angle: rotation angle around Z axis; meaning top or down
 ```
+
+### 深度测试
+- 深度测试默认禁用，需开启，测试通过会更新深度值，失败会丢弃该片段，深度缓冲在片元着色器运行后以及模板测试运行之后，在屏幕空间中运行的。
+- 
