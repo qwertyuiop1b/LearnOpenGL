@@ -15,6 +15,11 @@ option(GLFW_BUILD_EXAMPLES OFF)
 option(GLFW_BUILD_TESTS OFF)
 add_subdirectory(3rdparty/glfw)
 
+// ----------linux-----------------
+// glfw
+sudo apt-get install libwayland-dev wayland-protocols libxkbcommon-dev libgl-dev
+// assimp
+sudo apt-get install zlib1g-dev
 ```
 #### GLAD
 -
