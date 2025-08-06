@@ -41,29 +41,39 @@ public:
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glDepthMask(GL_FALSE); // Disable depth writing for skybox
-        skyboxShader.use();
-        skyboxTexture.bind();
-        skyboxVao.bind();
-        glm::mat4 view = glm::mat4(glm::mat3(oribitCamera.getViewMatrix()));
-        glm::mat4 projection = glm::perspective(glm::radians(45.f), static_cast<float>(getWidth()) / static_cast<float>(getHeight()), 0.1f, 100.f);
-        skyboxShader.setMatrix4("view", view);
-        skyboxShader.setMatrix4("projection", projection);
-
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-        glDepthMask(GL_TRUE); // Re-enable depth writing
-
         // box cube
+    
+        glDepthFunc(GL_LESS);
         boxShader.use();
-        boxVao.bind();
-        boxTexture.bind();
         glm::mat4 model = glm::mat4(1.0f);
-        view = oribitCamera.getViewMatrix();
+        glm::mat4 view = oribitCamera.getViewMatrix();
+        glm::mat4 projection = glm::perspective(glm::radians(45.f), static_cast<float>(getWidth()) / static_cast<float>(getHeight()), 0.1f, 100.f);
         boxShader.setMatrix4("model", model);
         boxShader.setMatrix4("view", view);
         boxShader.setMatrix4("projection", projection);
+        boxVao.bind();
+        boxTexture.bind();
         glDrawArrays(GL_TRIANGLES, 0, 36);
-        boxVao.unbind();
+        boxVao.unbind(); 
+    
+        // skybox
+        glDepthFunc(GL_LEQUAL); // Use less than or equal for skybox ? why use GL_EQUAL instead of GL_LESS?  
+        /**
+         * The skybox is rendered with a depth function of GL_LEQUAL to ensure that it is drawn behind all other objects.
+         * This is important because the skybox is meant to represent the background and should not be occluded by other objects.
+         * Using GL_EQUAL instead of GL_LESS allows the skybox to be rendered at the same depth as other objects,
+         * ensuring that it is always visible in the background.
+         */
+        skyboxShader.use();
+        skyboxVao.bind();
+        skyboxTexture.bind();
+        view = glm::mat4(glm::mat3(oribitCamera.getViewMatrix()));
+        skyboxShader.setMatrix4("view", view);
+        skyboxShader.setMatrix4("projection", projection);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        skyboxVao.unbind();
+        glDepthFunc(GL_LESS);
+
     }
 
     virtual void init(unsigned int glVersionMajor = 3, unsigned int glVersionMinor = 3) override {
@@ -133,7 +143,7 @@ public:
             std::cout << "Skybox texture loaded successfully. texture id: " << skyboxTexture.getId()  << std::endl;
         }
 
-        skyboxShader.loadFromfile("shaders/04_shaders/4_6_1_skybox.vert", "shaders/04_shaders/4_6_1_skybox.frag");
+        skyboxShader.loadFromfile("shaders/04_shaders/4_6_3_skybox_reflect.vert", "shaders/04_shaders/4_6_3_skybox_reflect.frag");
         skyboxShader.use();
         skyboxShader.setInt("skyboxTexture", 0);
 
@@ -200,6 +210,7 @@ public:
         boxShader.setInt("texture1", 0);
 
         glEnable(GL_DEPTH_TEST);
+        glDepthMask(true);
     }
 
 private:
