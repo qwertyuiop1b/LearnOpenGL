@@ -35,11 +35,11 @@ public:
 
     void setFloat3(const std::string &name, float value1, float value2, float value3) const;
 
-    void setFloat3(const std::string &name, glm::vec3 &value) const;
+    void setFloat3(const std::string &name, const glm::vec3 &value) const;
 
-    void setMatrix3(const std::string &name,  glm::mat3 &mat3 ) const;
+    void setMatrix3(const std::string &name,  const glm::mat3 &mat3 ) const;
 
-    void setMatrix4(const std::string &name,  glm::mat4 &mat4 ) const;
+    void setMatrix4(const std::string &name,  const glm::mat4 &mat4 ) const;
 
 };
 
