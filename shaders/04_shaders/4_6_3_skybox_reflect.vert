@@ -5,6 +5,7 @@ out vec3 vPosition;
 
 uniform mat4 projection;
 uniform mat4 view;
+uniform mat4 model;
 
 void main() {
     vec4 position = projection * view * vec4(aPos, 1.0);
