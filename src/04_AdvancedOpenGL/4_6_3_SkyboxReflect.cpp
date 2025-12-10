@@ -42,22 +42,22 @@ public:
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // box cube
-    
         glDepthFunc(GL_LESS);
         boxShader.use();
         glm::mat4 model = glm::mat4(1.0f);
-        glm::mat4 view = oribitCamera.getViewMatrix();
+
         glm::mat4 projection = glm::perspective(glm::radians(45.f), static_cast<float>(getWidth()) / static_cast<float>(getHeight()), 0.1f, 100.f);
         boxShader.setMatrix4("model", model);
-        boxShader.setMatrix4("view", view);
+        boxShader.setMatrix4("view", oribitCamera.getViewMatrix());
         boxShader.setMatrix4("projection", projection);
+        boxShader.setFloat3("cameraPosition", oribitCamera.getEye());
         boxVao.bind();
-        boxTexture.bind();
+        skyboxTexture.bind();
         glDrawArrays(GL_TRIANGLES, 0, 36);
-        boxVao.unbind(); 
-    
+        boxVao.unbind();
+
         // skybox
-        glDepthFunc(GL_LEQUAL); // Use less than or equal for skybox ? why use GL_EQUAL instead of GL_LESS?  
+        glDepthFunc(GL_LEQUAL); // Use less than or equal for skybox ? why use GL_EQUAL instead of GL_LESS?
         /**
          * The skybox is rendered with a depth function of GL_LEQUAL to ensure that it is drawn behind all other objects.
          * This is important because the skybox is meant to represent the background and should not be occluded by other objects.
@@ -67,8 +67,7 @@ public:
         skyboxShader.use();
         skyboxVao.bind();
         skyboxTexture.bind();
-        view = glm::mat4(glm::mat3(oribitCamera.getViewMatrix()));
-        skyboxShader.setMatrix4("view", view);
+        skyboxShader.setMatrix4("view", glm::mat4(glm::mat3(oribitCamera.getViewMatrix())));
         skyboxShader.setMatrix4("projection", projection);
         glDrawArrays(GL_TRIANGLES, 0, 36);
         skyboxVao.unbind();
@@ -149,65 +148,63 @@ public:
 
         // cube box
         float cubeVertices[] = {
-            // positions          // texture Coords
-            -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-            0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-            0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-            0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-            -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-            -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+            0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+            0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+            0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+            -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
 
-            -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-            0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-            0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-            0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-            -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-            -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+            0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+            0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+            0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+            -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
 
-            -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-            -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-            -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-            -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-            -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-            -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+            -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+            -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+            -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+            -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+            -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+            -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
 
-            0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-            0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-            0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-            0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-            0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-            0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+            0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+            0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+            0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+            0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+            0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+            0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
 
-            -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-            0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-            0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-            0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-            -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-            -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+            0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+            0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+            0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
 
-            -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-            0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-            0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-            0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-            -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-            -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+            -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+            0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+            0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+            0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+            -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+            -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
         };
         boxVao.create();
         boxVao.bind();
         VertexBuffer boxVbo;
         boxVbo.upload(cubeVertices, sizeof(cubeVertices) / sizeof(float), BufferUsage::StaticDraw);
         std::vector<VertexAttribute> boxAttrs {
-            VertexAttribute{0, 3, AttributeType::Float, GL_FALSE, 5 * sizeof(float), (void*)0},
-            VertexAttribute{1, 2, AttributeType::Float, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float))}
+            VertexAttribute{0, 3, AttributeType::Float, GL_FALSE, 6 * sizeof(float), (void*)0},
+            VertexAttribute{1, 3, AttributeType::Float, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float))}
         };
         boxVao.addVertexBuffer(boxVbo, boxAttrs);
         boxVao.unbind();
         boxVbo.unbind();
 
-        boxTexture.loadFromFile("textures/marble.jpg");
-        boxShader.loadFromfile("shaders/04_shaders/4_1_1_depth_test.vert", "shaders/04_shaders/4_1_1_depth_test.frag");
+        boxShader.loadFromfile("shaders/04_shaders/4_6_3_skybox_reflect.vert", "shaders/04_shaders/4_6_3_skybox_reflect.frag");
         boxShader.use();
-        boxShader.setInt("texture1", 0);
+        boxShader.setInt("skyboxTexture", 0);
 
         glEnable(GL_DEPTH_TEST);
         glDepthMask(true);

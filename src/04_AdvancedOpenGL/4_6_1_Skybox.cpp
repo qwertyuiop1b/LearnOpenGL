@@ -40,6 +40,7 @@ public:
         glViewport(0, 0, getWidth(), getHeight());
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glViewport(0, 0, getWidth(), getHeight());
 
         glDepthMask(GL_FALSE); // Disable depth writing for skybox
         skyboxShader.use();
