@@ -29,6 +29,7 @@ void Application::init(unsigned int glVersionMajor, unsigned int glVersionMinor)
     }
 
     glfwMakeContextCurrent(mWindow);
+    glfwSwapInterval(0);
     // Set the window pointer for callbacks
     glfwSetWindowUserPointer(mWindow, this);
     glfwSetKeyCallback(mWindow, keyCallbackWrapper);
