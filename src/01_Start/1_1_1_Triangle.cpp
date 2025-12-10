@@ -30,130 +30,157 @@ void processInput(GLFWwindow* window);
 
 
 int main() {
-  glfwInit();
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-  // 启用透明
-//  glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GL_TRUE);
+    glfwInit();
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    // 启用透明
+    // glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GL_TRUE);
 
-#ifdef __APPLE__
-  glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-#endif
+    #ifdef __APPLE__
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    #endif
 
-  GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "01_Triangle", nullptr, nullptr);
-  if (window == nullptr) {
-    std::cout << "Failed to create glfw window" << std::endl;
-    glfwTerminate();
-    return -1;
-  }
-  glfwMakeContextCurrent(window);
-  glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "01_Triangle", nullptr, nullptr);
+    if (window == nullptr) {
+        std::cout << "Failed to create glfw window" << std::endl;
+        glfwTerminate();
+        return -1;
+    }
+    glfwMakeContextCurrent(window);
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-  // 加载opengl函数
-  if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
-    std::cout << "Failed to initialize GLAD" << std::endl;
-    glfwTerminate();
-    return -1;
-  }
-
-
-  unsigned int vertexShader;
-  vertexShader = glCreateShader(GL_VERTEX_SHADER);
-  glShaderSource(vertexShader, 1, &vertexShaderSource, nullptr);
-  glCompileShader(vertexShader);
-
-  int success;
-  char infoLog[512];
-  glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-  if (!success) {
-    glGetShaderInfoLog(vertexShader, 512, nullptr, infoLog);
-    std::cout << "ERROR:SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-  }
-
-  unsigned int fragmentShader;
-  fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-  glShaderSource(fragmentShader, 1, &fragmentShaderSource, nullptr);
-  glCompileShader(fragmentShader);
-
-  glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-  if (!success) {
-    glGetShaderInfoLog(fragmentShader, 512, nullptr, infoLog);
-    std::cout << "ERROR:SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
-  }
-
-  unsigned int shaderProgram;
-  shaderProgram = glCreateProgram();
-  glAttachShader(shaderProgram, vertexShader);
-  glAttachShader(shaderProgram, fragmentShader);
-  glLinkProgram(shaderProgram);
-
-  glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-  if (!success) {
-    glGetProgramInfoLog(shaderProgram, 512, nullptr, infoLog);
-    std::cout << "ERROR:PROGRAM::LINK\n" << infoLog << std::endl;
-  }
-
-  // 链接完成可以删除shader
-  glDeleteShader(vertexShader);
-  glDeleteShader(fragmentShader);
-
-  float vertices[] = {
-    -0.5f, -0.5f, 0.0f,
-    0.5f, -0.5f, 0.0f,
-    0.0f, 0.5f, 0.0f,
-  };
-
-  // CPU --> GPU   vertices => vertices buffer
-  unsigned int VBO, VAO;
-  glGenVertexArrays(1, &VAO);
-  glGenBuffers(1, &VBO);
-
-  glBindVertexArray(VAO);
-  // 指定Buffer的类型 GL_ARRAY_BUFFER
-  glBindBuffer(GL_ARRAY_BUFFER, VBO);
-  // 传递到GPU中
-  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-  // 顶点属性以什么方式解析获取数据
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
-  // 激活顶点属性
-  glEnableVertexAttribArray(0);
-  // 解绑
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
-  glBindVertexArray(0);
+    // 加载opengl函数
+    if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
+        std::cout << "Failed to initialize GLAD" << std::endl;
+        glfwTerminate();
+        return -1;
+    }
 
 
-  while(!glfwWindowShouldClose(window)) {
-    // 处理输入
-    processInput(window);
+    unsigned int vertexShader;
+    vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertexShader, 1, &vertexShaderSource, nullptr);
+    glCompileShader(vertexShader);
 
-    // 渲染
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-    glUseProgram(shaderProgram);
+    int success;
+    char infoLog[512];
+    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+    if (!success) {
+        glGetShaderInfoLog(vertexShader, 512, nullptr, infoLog);
+        std::cout << "ERROR:SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+    }
+
+    unsigned int fragmentShader;
+    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader, 1, &fragmentShaderSource, nullptr);
+    glCompileShader(fragmentShader);
+
+    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+    if (!success) {
+        glGetShaderInfoLog(fragmentShader, 512, nullptr, infoLog);
+        std::cout << "ERROR:SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
+    }
+
+    unsigned int shaderProgram;
+    shaderProgram = glCreateProgram();
+    glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, fragmentShader);
+    glLinkProgram(shaderProgram);
+
+    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+    if (!success) {
+        glGetProgramInfoLog(shaderProgram, 512, nullptr, infoLog);
+        std::cout << "ERROR:PROGRAM::LINK\n" << infoLog << std::endl;
+    }
+
+    // 链接完成可以删除shader
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+
+    // 顶点数据
+    float vertices[] = {
+        -0.5f, -0.5f, 0.0f,
+        0.5f, -0.5f, 0.0f,
+        0.0f, 0.5f, 0.0f,
+    };
+
+    // 顶点画线
+    // float vertices[] = {
+    //     -0.5f, -0.5f, 0.0f,
+    //     0.5f, -0.5f, 0.0f,
+    //     0.0f, 0.5f, 0.0f,
+    //     -0.5f, -0.5f, 0.0f,
+    // };
+
+    // CPU --> GPU   vertices => vertices buffer
+    unsigned int VBO, VAO;
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+
     glBindVertexArray(VAO);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    // 指定Buffer的类型 GL_ARRAY_BUFFER
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    // 传递到GPU中
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    // 顶点属性以什么方式解析获取数据
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+    // 激活顶点属性
+    glEnableVertexAttribArray(0);
+    // 解绑
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
 
-    // 交换buffer
-    glfwSwapBuffers(window);
-    glfwPollEvents();
-  }
 
-  glDeleteVertexArrays(1, &VAO);
-  glDeleteBuffers(1, &VBO);
-  glDeleteProgram(shaderProgram);
-  glfwTerminate();
+    while(!glfwWindowShouldClose(window)) {
+        // 处理输入
+        processInput(window);
 
-  return 0;
+        // 渲染
+        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+        glUseProgram(shaderProgram);
+        glBindVertexArray(VAO);
+
+        /** 
+        * GL_LINE_STRIP  
+        * 绘制一条直线，连接所有顶点
+        * GL_LINE_LOOP  
+        * 绘制一条直线，连接所有顶点，并闭合
+        * GL_LINES  
+        * 绘制多条直线，每两个顶点之间绘制一条直线
+        * GL_TRIANGLES  
+        * 绘制多个三角形，每三个顶点之间绘制一个三角形
+        * GL_TRIANGLE_STRIP  
+        * 绘制三角形带 (V0 V1V2, V1V2 V3, V2V3 V4...)
+        * GL_TRIANGLE_FAN  
+        * 绘制三角形扇 (V0 V1V2, V0 V2V3, V0 V3V4...)
+        */
+        // glDrawArrays(GL_LINE_STRIP, 0, 4);  
+        // glDrawArrays(GL_LINE_LOOP, 0, 3);  
+        // glDrawArrays(GL_LINES, 0, 4);  
+        glDrawArrays(GL_TRIANGLES, 0, 3);  
+
+        // 交换buffer
+        glfwSwapBuffers(window);
+        glfwPollEvents();
+    }
+
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+    glDeleteProgram(shaderProgram);
+    glfwTerminate();
+
+    return 0;
 }
 
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
-  glViewport(0, 0, width, height);
+    glViewport(0, 0, width, height);
 }
 
 void processInput(GLFWwindow* window) {
-  if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-    glfwSetWindowShouldClose(window, true);
-  }
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+        glfwSetWindowShouldClose(window, true);
+    }
 }
