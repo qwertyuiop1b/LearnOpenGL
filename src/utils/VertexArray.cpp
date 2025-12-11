@@ -9,6 +9,7 @@
 
 
 VertexArray::VertexArray(): mId(0), mIndexBufferBound(false), mVboIds() {
+    create();
 }
 
 VertexArray::~VertexArray() {

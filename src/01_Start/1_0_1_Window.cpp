@@ -63,7 +63,6 @@ int main() {
         if (++frameCounter % frameRate == 0) {
             std::cout << "DeltaTime: " << (fps.getDeltaTime() * 1000.f) << "ms" << std::endl;
         }
-
     }
     glfwTerminate();
     return 0;

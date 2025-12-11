@@ -35,11 +35,11 @@ int main() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     // 启用透明
-    // glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GL_TRUE);
+    glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GL_TRUE);
 
-    #ifdef __APPLE__
+#ifdef __APPLE__
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    #endif
+#endif
 
     GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "01_Triangle", nullptr, nullptr);
     if (window == nullptr) {
@@ -118,18 +118,28 @@ int main() {
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
 
-    glBindVertexArray(VAO);
+    /* VAO记录的内容：
+    * 1.glVertexAttribPointer 的调用
+    * 2.glEnableVertexAttribArray 的调用
+    * 3.调用 glVertexAttribPointer 时当前绑定的 VBO
+    * 4.索引缓冲对象的绑定(如果使用)
+    */
     // 指定Buffer的类型 GL_ARRAY_BUFFER
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     // 传递到GPU中
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    // 绑定VAO
+    glBindVertexArray(VAO);
     // 顶点属性以什么方式解析获取数据
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
     // 激活顶点属性
     glEnableVertexAttribArray(0);
-    // 解绑
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    // 解绑VAO
     glBindVertexArray(0);
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 
     while(!glfwWindowShouldClose(window)) {

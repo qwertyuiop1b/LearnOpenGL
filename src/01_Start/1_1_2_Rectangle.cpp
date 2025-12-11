@@ -1,63 +1,42 @@
-#include "utils/Application.h"
 #include "utils/Shader.h"
 #include "utils/VertexArray.h"
 #include "utils/VertexBuffer.h"
-#include <vector>
+#include "utils/Window.h"
+#include <memory>
 
-class RectangleApp: public Application {
+
+class Rectangle2App {
 public:
-    RectangleApp(unsigned int width, unsigned int height, const std::string& title)
-        : Application(width, height, title) {
-        init();
-        beforeRender();
+    Rectangle2App(unsigned int width, unsigned int height, const std::string& title)
+        : window(new Window(width, height, title))
+        , shader(new Shader("shaders/01_shaders/1_1_2_Rectangle.vert", "shaders/01_shaders/1_1_2_Rectangle.frag"))
+        , vbo(new VertexBuffer(GL_ARRAY_BUFFER))
+        , vao(new VertexArray())
+        , ibo(new VertexBuffer(GL_ELEMENT_ARRAY_BUFFER))
+        {
+            init();
     }
 
-    virtual void render() override {
-        glClearColor(0.2f, 0.3f, 0.2f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        rectShader.use();
-        vao.bind();
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-    }
-
-private:
-    Shader rectShader;
-
-    VertexArray vao;
-
-    void beforeRender() {
-        // create shader from file
-        rectShader.loadFromfile("shaders/01_shaders/1_1_2_Rectangle.vert", "shaders/01_shaders/1_1_2_Rectangle.frag");
-        // create vao vbo ebo
-        float vertices[] {
-            // top left
-            -0.5f, 0.5f, 0.f, 1.0f, 0.f, 0.f,
-            // top right
-            0.5f, 0.5f, 0.f, 0.f, 1.0f, 0.f,
-            // bottom right
-            0.5f, -0.5f, 0.f, 0.f, 0.f, 1.f,
-            // bottom left
-            -0.5f, -0.5f, 0.f, 1.f, 1.f, 1.f,
+    void init() {
+        float vertices[] = {
+            // position, color
+            0.5, 0.5, 0, 1.0, 0.0, 0.0,   // top right
+            -0.5, 0.5, 0, 1.0, 1.0, 1.0,  // top left
+            -0.5, -0.5, 0, 0.0, 0.0, 1.0, // bottom left
+            0.5, -0.5, 0, 0.0, 1.0, 0.0,  // bottom right
         };
 
-        unsigned int indices[] {
+        unsigned int indices[] = {
             0, 1, 2,
             0, 2, 3,
         };
 
-        // vao
-        vao.create();
-        vao.bind();
-
-        VertexBuffer vbo(GL_ARRAY_BUFFER);
-        vbo.upload<float>(vertices, sizeof(vertices) / sizeof(float));
-
-        VertexBuffer ibo(GL_ELEMENT_ARRAY_BUFFER);
-        ibo.upload(indices, sizeof(indices) / sizeof(unsigned int));
+        vao->bind();
+        vbo->bind();
+        vbo->upload(vertices, sizeof(vertices));
 
         // attributes
-        std::vector<VertexAttribute> attrs {
+        std::vector<VertexAttribute> attributes {
             VertexAttribute{
                 0,
                 3,
@@ -75,14 +54,43 @@ private:
                 (void*)( 3 * sizeof(AttributeType::Float)),
             },
         };
-        vao.addVertexBuffer(vbo, attrs);
-        vao.setIndexBuffer(ibo);
-        vao.unbind();
+        vao->addVertexBuffer(*vbo, attributes);
+        
+        ibo->bind();
+        ibo->upload(indices, sizeof(indices));
+        vao->setIndexBuffer(*ibo);
+        vao->unbind();
+
+        // cullface
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
+        glFrontFace(GL_CCW);
     }
+
+    void run() {
+        while (!window->shouldClose()) {
+            window->pollEvents();
+
+            shader->use();
+            glClearColor(0.2f, 0.3f, 0.2f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT);
+            vao->bind();
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        
+            window->swapBuffer();
+        }
+    }
+private:
+    std::unique_ptr<Window> window;
+    std::unique_ptr<Shader> shader;
+    std::unique_ptr<VertexArray> vao;
+    std::unique_ptr<VertexBuffer> vbo;
+    std::unique_ptr<VertexBuffer> ibo;
 };
 
+
 int main() {
-    RectangleApp app(800, 600, "1_1_2_Rectangle");
+    Rectangle2App app(800, 600, "1_1_2_Rectangle2");
     app.run();
     return 0;
 }
