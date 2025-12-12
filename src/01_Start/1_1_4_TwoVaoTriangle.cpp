@@ -2,37 +2,42 @@
 #include "utils/Shader.h"
 #include "utils/VertexArray.h"
 #include "utils/VertexBuffer.h"
+#include "utils/Window.h"
+#include <memory>
 #include <vector>
 
-class TwoVaoTriangle: public Application {
+class TwoVaoTriangle {
 public:
     TwoVaoTriangle(unsigned int width, unsigned int height, const std::string& title)
-        : Application(width, height, title) {
+        : window(std::make_unique<Window>(width, height, title))
+        , twoVaoTriangleShader(std::make_unique<Shader>("shaders/01_shaders/1_1_4_TwoVaoTriangle.vert", "shaders/01_shaders/1_1_4_TwoVaoTriangle.frag"))
+        , vao(std::make_unique<VertexArray>())
+        , vao2(std::make_unique<VertexArray>()) {
         init();
-        beforeRender();
     }
 
-    virtual void render() override {
-        glClearColor(0.2f, 0.3f, 0.2f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        twoVaoTriangleShader.use();
-        vao.bind();
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-        vao2.bind();
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-
+    void run() {
+        while(!window->shouldClose()) {
+            window->pollEvents();
+            glClearColor(0.2f, 0.3f, 0.2f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT);
+    
+            twoVaoTriangleShader->use();
+            vao->bind();
+            glDrawArrays(GL_TRIANGLES, 0, 3);
+            vao2->bind();
+            glDrawArrays(GL_TRIANGLES, 0, 3);
+            window->swapBuffer();
+        }
     }
 
 private:
-    Shader twoVaoTriangleShader;
+    std::unique_ptr<Window> window;
+    std::unique_ptr<Shader> twoVaoTriangleShader;
+    std::unique_ptr<VertexArray> vao;
+    std::unique_ptr<VertexArray> vao2;
 
-    VertexArray vao;
-    VertexArray vao2;
-
-    void beforeRender() {
-        // create shader from file
-        twoVaoTriangleShader.loadFromfile("shaders/01_shaders/1_1_4_TwoVaoTriangle.vert", "shaders/01_shaders/1_1_4_TwoVaoTriangle.frag");
+    void init() {
         // create vao vbo ebo
         float vertices[] {
             -0.5f, 0.5f, 0.f,
@@ -40,14 +45,16 @@ private:
             -0.5f, -0.5f, 0.f,
         };
 
-        // vao
-        vao.create();
-        vao.bind();
+        float vertices2[] {
+            0.f, 0.f, 0.f,
+            0.5f, 0.5f, 0.f,
+            0.5f, -0.5f, 0.f,
+        };
 
+        // vao
+        vao->bind();
         VertexBuffer vbo(GL_ARRAY_BUFFER);
         vbo.upload<float>(vertices, sizeof(vertices) / sizeof(float));
-
-
         // attributes
         std::vector<VertexAttribute> attrs {
             VertexAttribute{
@@ -59,22 +66,15 @@ private:
                 0,
             }
         };
-        vao.addVertexBuffer(vbo, attrs);
+        vao->addVertexBuffer(vbo, attrs);
         vbo.unbind();
-        vao.unbind();
-
+        vao->unbind();
 
         // vao2
-        vao2.create();
-        vao2.bind();
-        float vertices2[] {
-            0.f, 0.f, 0.f,
-            0.5f, 0.5f, 0.f,
-            0.5f, -0.5f, 0.f,
-        };
-
+        vao2->bind();
         VertexBuffer vbo2(GL_ARRAY_BUFFER);
         vbo2.upload<float>(vertices2, sizeof(vertices2) / sizeof(float));
+        // attributes
         std::vector<VertexAttribute> attrs2 {
             VertexAttribute{
                 0,
@@ -85,9 +85,9 @@ private:
                 0,
             }
         };
-        vao2.addVertexBuffer(vbo2, attrs2);
+        vao2->addVertexBuffer(vbo2, attrs2);
         vbo2.unbind();
-        vao2.unbind();
+        vao2->unbind();
     }
 };
 

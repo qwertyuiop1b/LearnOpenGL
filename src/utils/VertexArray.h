@@ -26,6 +26,9 @@ private:
     unsigned int mId;
     bool mIndexBufferBound;
     std::vector<GLuint> mVboIds;
+
+    void create();
+
 public:
     VertexArray();
     ~VertexArray();
@@ -35,12 +38,11 @@ public:
 
     VertexArray(VertexArray&& other) noexcept;
     VertexArray& operator=(VertexArray&& other) noexcept;
-    void create();
+
     void bind() const;
     void unbind() const;
 
     VertexArray& addVertexBuffer(const VertexBuffer& vbo, const std::vector<VertexAttribute>& attributes);
-
     VertexArray& setIndexBuffer(const VertexBuffer& ibo);
 
 };
