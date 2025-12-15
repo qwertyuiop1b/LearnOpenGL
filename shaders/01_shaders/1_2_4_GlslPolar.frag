@@ -22,8 +22,32 @@ void main() {
     float outerRadius = 0.7;
     float ringDist = sdfRing(vTexcoord, innerRadius, outerRadius);
     
-    // 如果不在圆环内，完全不显示
-    if (ringDist > 0.0) {
+    // 使用 dFdx 和 dFdy 计算屏幕空间梯度，实现自适应抗锯齿
+    // fwidth 是 abs(dFdx(x)) + abs(dFdy(x)) 的简写，用于 SDF 抗锯齿
+    // 可以直接使用 fwidth 函数，或者手动计算
+    float fwidthDist = fwidth(ringDist);
+    
+    // 或者手动计算（等价于上面的 fwidth）
+    // float fwidthDist = abs(dFdx(ringDist)) + abs(dFdy(ringDist));
+    
+    // 或者使用更精确的梯度长度计算（可选）
+    // float distGradX = dFdx(ringDist);
+    // float distGradY = dFdy(ringDist);
+    // float fwidthDist = length(vec2(distGradX, distGradY));
+    
+    // 自适应平滑宽度：基于屏幕空间梯度
+    // fwidthDist 表示距离场在屏幕空间的梯度大小
+    // 梯度越大，边缘越陡峭，需要的平滑范围越小
+    // 使用 fwidth 可以确保抗锯齿效果在不同分辨率下保持一致
+    float ringWidth = fwidthDist * 1.5; // 调整系数可以控制平滑程度
+    
+    // 使用屏幕空间距离进行平滑
+    // ringDist < 0 表示在圆环内，ringDist > 0 表示在圆环外
+    // 在 [-ringWidth, ringWidth] 范围内进行平滑过渡
+    float ringAlpha = 1.0 - smoothstep(-ringWidth, ringWidth, ringDist);
+    
+    // 如果 alpha 太小，直接返回透明（优化）
+    if (ringAlpha < 0.01) {
         fragColor = vec4(0.0, 0.0, 0.0, 0.0);
         return;
     }
@@ -43,10 +67,6 @@ void main() {
     
     // 判断是否在进度范围内
     bool inProgress = normalizedAngle <= uProgress;
-    
-    // 圆环边缘平滑（负值表示在圆环内）
-    float ringWidth = 0.04;
-    float ringAlpha = 1.0 - smoothstep(0.0, ringWidth, abs(ringDist));
     
     // 根据进度和位置决定颜色
     vec3 progressColor = vec3(0.2, 0.8, 1.0); // 进度条颜色（青色）
