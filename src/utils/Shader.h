@@ -1,6 +1,7 @@
 #ifndef OPENGL_SHADER_H
 #define OPENGL_SHADER_H
 
+#include "glm/fwd.hpp"
 #include <glad/glad.h>
 #include <string>
 #include <fstream>
@@ -33,9 +34,15 @@ public:
 
     void setFloat2(const std::string &name, float value1, float value2) const;
 
+    void setFloat2(const std::string& name, const glm::vec2 &value) const;
+
     void setFloat3(const std::string &name, float value1, float value2, float value3) const;
 
     void setFloat3(const std::string &name, const glm::vec3 &value) const;
+
+    void setFloat4(const std::string &name, float value1, float value2, float value3, float value4) const;
+
+    void setFloat4(const std::string& name, const glm::vec4 &value) const;
 
     void setMatrix3(const std::string &name,  const glm::mat3 &mat3 ) const;
 
