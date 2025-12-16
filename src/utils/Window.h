@@ -26,6 +26,8 @@ public:
 
     inline unsigned int getHeight() const { return mHeight; }
 
+    inline GLFWwindow* getGLFWWindow() const { return mWindow; }
+
 private:
     GLFWwindow* mWindow;
     unsigned int mWidth, mHeight;

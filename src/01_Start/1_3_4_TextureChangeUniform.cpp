@@ -1,30 +1,39 @@
 #include <memory>
-#include <vector>
-#include "imgui.h"
+#include "utils/FPS.h"
+#include "utils/Window.h"
 #include "utils/Shader.h"
 #include "utils/Texture.h"
 #include "utils/VertexArray.h"
 #include "utils/VertexBuffer.h"
-#include "utils/Window.h"
 
-class TextureRendering {
+class TextureChangeUniform {
 public:
-TextureRendering(unsigned int width, unsigned int height, const std::string& title)
+TextureChangeUniform(unsigned int width, unsigned int height, const std::string& title)
         : window(std::make_unique<Window>(width, height, title))
-        , texture(std::make_unique<Texture>("textures/container.jpg"))
-        , shader(std::make_unique<Shader>("shaders/01_shaders/1_3_1_Texture.vert", "shaders/01_shaders/1_3_1_Texture.frag"))
-        , vao(std::make_unique<VertexArray>()) {
+        , shader(std::make_unique<Shader>("shaders/01_shaders/1_3_4_TextureChangeUniform.vert", "shaders/01_shaders/1_3_4_TextureChangeUniform.frag"))
+        , vao(std::make_unique<VertexArray>())
+        , texture1(std::make_unique<Texture>("textures/container.jpg"))
+        , texture2(std::make_unique<Texture>("textures/awesomeface.png")) {
         init();
     }
 
     void run() {
+        FPS fps(60);
         while (!window->shouldClose()) {
+            fps.update();
             window->pollEvents();
+            auto deltaTime = fps.getDeltaTime();
+            handleMixValue(deltaTime);
+
             glClearColor(0.2f, 0.3f, 0.2f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
+
             shader->use();
-            texture->bind();
-            // shader->setInt("uTexture", 0);
+            texture1->bind(0);
+            texture2->bind(1);
+            shader->setInt("uTexture", 0);
+            shader->setInt("uTexture2", 1);
+            shader->setFloat("uMixValue", mixValue);
             vao->bind();
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
             window->swapBuffer();
@@ -33,9 +42,27 @@ TextureRendering(unsigned int width, unsigned int height, const std::string& tit
 
 private:
     std::unique_ptr<Window> window;
-    std::unique_ptr<Texture> texture;
     std::unique_ptr<Shader> shader;
     std::unique_ptr<VertexArray> vao;
+    std::unique_ptr<Texture> texture1;
+    std::unique_ptr<Texture> texture2;
+
+    float mixValue = 0.5f;
+    void handleMixValue(float deltaTime) {
+        if (glfwGetKey(window->getGLFWWindow(), GLFW_KEY_UP) == GLFW_PRESS) {
+            mixValue += 0.2f * deltaTime;
+        }
+        if (glfwGetKey(window->getGLFWWindow(), GLFW_KEY_DOWN) == GLFW_PRESS) {
+            mixValue -= 0.2f * deltaTime;
+        }
+        if (mixValue < 0.0f) {
+            mixValue = 0.0f;
+        }
+        if (mixValue > 1.0f) {
+            mixValue = 1.0f;
+        }
+    }
+
 
     void init() {
         float vertices[] = {
@@ -87,13 +114,19 @@ private:
         vao->unbind();
         vbo.unbind();
         ebo.unbind();
+
+        texture2->setParameter(GL_TEXTURE_WRAP_S, (GLuint)GL_MIRRORED_REPEAT);
+        texture2->setParameter(GL_TEXTURE_WRAP_T, (GLuint)GL_MIRRORED_REPEAT);
     }
+
+
 };
+
 
 
 int main() {
     try {
-        TextureRendering app(800, 600, "1_3_1_Texture");
+        TextureChangeUniform app(800, 600, "1_3_4_TextureChangeUniform");
         app.run();
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;

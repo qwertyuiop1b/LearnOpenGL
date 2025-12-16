@@ -1,19 +1,18 @@
 #include <memory>
-#include <vector>
-#include "imgui.h"
+#include "utils/Window.h"
 #include "utils/Shader.h"
 #include "utils/Texture.h"
 #include "utils/VertexArray.h"
 #include "utils/VertexBuffer.h"
-#include "utils/Window.h"
 
-class TextureRendering {
+class TextureWrap {
 public:
-TextureRendering(unsigned int width, unsigned int height, const std::string& title)
+TextureWrap(unsigned int width, unsigned int height, const std::string& title)
         : window(std::make_unique<Window>(width, height, title))
-        , texture(std::make_unique<Texture>("textures/container.jpg"))
-        , shader(std::make_unique<Shader>("shaders/01_shaders/1_3_1_Texture.vert", "shaders/01_shaders/1_3_1_Texture.frag"))
-        , vao(std::make_unique<VertexArray>()) {
+        , shader(std::make_unique<Shader>("shaders/01_shaders/1_3_3_TextureWrap.vert", "shaders/01_shaders/1_3_3_TextureWrap.frag"))
+        , vao(std::make_unique<VertexArray>())
+        , texture1(std::make_unique<Texture>("textures/container.jpg"))
+        , texture2(std::make_unique<Texture>("textures/awesomeface.png")) {
         init();
     }
 
@@ -23,8 +22,10 @@ TextureRendering(unsigned int width, unsigned int height, const std::string& tit
             glClearColor(0.2f, 0.3f, 0.2f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
             shader->use();
-            texture->bind();
-            // shader->setInt("uTexture", 0);
+            texture1->bind(0);
+            texture2->bind(1);
+            shader->setInt("uTexture", 0);
+            shader->setInt("uTexture2", 1);
             vao->bind();
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
             window->swapBuffer();
@@ -33,9 +34,10 @@ TextureRendering(unsigned int width, unsigned int height, const std::string& tit
 
 private:
     std::unique_ptr<Window> window;
-    std::unique_ptr<Texture> texture;
     std::unique_ptr<Shader> shader;
     std::unique_ptr<VertexArray> vao;
+    std::unique_ptr<Texture> texture1;
+    std::unique_ptr<Texture> texture2;
 
     void init() {
         float vertices[] = {
@@ -87,13 +89,17 @@ private:
         vao->unbind();
         vbo.unbind();
         ebo.unbind();
+
+        texture2->setParameter(GL_TEXTURE_WRAP_S, (GLuint)GL_MIRRORED_REPEAT);
+        texture2->setParameter(GL_TEXTURE_WRAP_T, (GLuint)GL_MIRRORED_REPEAT);
     }
 };
 
 
+
 int main() {
     try {
-        TextureRendering app(800, 600, "1_3_1_Texture");
+        TextureWrap app(800, 600, "1_3_3_TextureWrap");
         app.run();
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;

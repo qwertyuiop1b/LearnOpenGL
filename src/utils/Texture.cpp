@@ -1,12 +1,13 @@
 #include "Texture.h"
 #include <iostream>
-// Include
-// #ifndef STB_IMAGE_IMPLEMENTATION
-// #define STB_IMAGE_IMPLEMENTATION
 #include "stb_define.h"
 
 Texture::Texture(): textureId(0), width(0), height(0), channels(0), format(GL_RGB) {
 
+}
+
+Texture::Texture(const std::string& filepath): textureId(0), width(0), height(0), channels(0), format(GL_RGB) {
+    loadFromFile(filepath);
 }
 
 Texture::~Texture() {
@@ -15,24 +16,34 @@ Texture::~Texture() {
     }
 }
 
-// Texture::Texture(Texture&& other) noexcept : textureId(other.textureId), width(other.width), height(other.height), channels(other.channels), format(other.format){
-//     other.textureId = 0;
-// }
+Texture::Texture(Texture&& other) noexcept 
+    :textureId(other.textureId)
+    ,width(other.width)
+    ,height(other.height)
+    ,channels(other.channels)
+    ,format(other.format)
+    ,type(other.type)
+    ,path(std::move(other.path)){
+    other.textureId = 0;
+}
 
-// Texture& Texture::operator=(Texture&& other) noexcept {
-//     if (this != &other) {
-//         if (textureId != 0) {
-//             glDeleteTextures(1, &textureId);
-//         }
-//         textureId = other.textureId;
-//         width = other.width;
-//         height = other.height;
-//         channels = other.channels;
-//         format = other.format;
-//         other.textureId = 0;
-//     }
-//     return *this;
-// }
+Texture& Texture::operator=(Texture&& other) noexcept {
+    if (this != &other) {
+        if (textureId != 0) {
+            glDeleteTextures(1, &textureId);
+        }
+        textureId = other.textureId;
+        width = other.width;
+        height = other.height;
+        channels = other.channels;
+        format = other.format;
+        type = other.type;
+        path = std::move(other.path);
+
+        other.textureId = 0;
+    }
+    return *this;
+}
 
 bool Texture::loadFromFile(const std::string& filepath) {
     stbi_set_flip_vertically_on_load(true);
