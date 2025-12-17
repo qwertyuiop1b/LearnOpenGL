@@ -1,5 +1,5 @@
 #include "SpriteSheet.h"
-#include "../utils/Texture2.h"
+#include "../utils/Texture.h"
 #include <stdexcept>
 #include <iostream>
 
@@ -10,7 +10,7 @@ SpriteSheet::SpriteSheet(const std::string& texturePath)
     , textureHeight(0)
 {
     // 加载纹理
-    texture = std::make_unique<Texture2>(texturePath);
+    texture = std::make_unique<Texture>(texturePath);
     
     if (!texture->isValid()) {
         std::cerr << "Failed to load sprite sheet texture: " << texturePath << std::endl;

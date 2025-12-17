@@ -55,6 +55,7 @@ include_directories(
 
 # source code
 aux_source_directory(${PROJECT_SOURCE_DIR}/src/utils utils)
+aux_source_directory(${PROJECT_SOURCE_DIR}/src/sprite sprite)
 
 
 
@@ -62,7 +63,7 @@ file(GLOB CHR1 ${PROJECT_SOURCE_DIR}/src/01_Start/*.cpp)
 foreach (file ${CHR1})
     string(REGEX REPLACE ".*/(.+)\\.cpp" "\\1" exe ${file})
     message(exe: ${exe})
-    add_executable(${exe} ${file} ${utils} ${GLAD_SRC})
+    add_executable(${exe} ${file} ${utils} ${sprite} ${GLAD_SRC})
 
     if (APPLE)
         target_link_libraries(${exe} glfw glm assimp::assimp ${IMGUI_LIB}

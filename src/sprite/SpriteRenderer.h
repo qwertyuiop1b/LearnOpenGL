@@ -7,6 +7,7 @@
 #include <glm/glm.hpp>
 #include "../utils/Shader.h"
 #include "../utils/VertexArray.h"
+#include "../utils/VertexBuffer.h"
 
 namespace Sprite {
 
@@ -35,6 +36,7 @@ class SpriteRenderer {
 private:
     std::unique_ptr<Shader> shader;              // 精灵着色器
     std::unique_ptr<VertexArray> vao;            // VAO
+    std::unique_ptr<VertexBuffer> vbo;           // VBO（需要保持引用）
     SpriteSheet* spriteSheet;                    // 精灵图（不拥有所有权）
     std::map<std::string, Animation> animations; // 动画集合
     Animation* currentAnimation;                 // 当前动画（指向 animations 中的元素）

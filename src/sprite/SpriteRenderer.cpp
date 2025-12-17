@@ -7,8 +7,23 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
+#include <cstdio>
 
 namespace Sprite {
+
+// 辅助函数：查找文件路径
+static std::string findShaderPath(const char* relativePath) {
+    const char* prefixes[] = {"../", "", "./"};
+    for (const char* prefix : prefixes) {
+        std::string fullPath = std::string(prefix) + relativePath;
+        FILE* f = fopen(fullPath.c_str(), "r");
+        if (f) {
+            fclose(f);
+            return fullPath;
+        }
+    }
+    return relativePath; // 返回原路径作为后备
+}
 
 SpriteRenderer::SpriteRenderer(SpriteSheet* sheet)
     : spriteSheet(sheet)
@@ -19,14 +34,28 @@ SpriteRenderer::SpriteRenderer(SpriteSheet* sheet)
         return;
     }
     
-    // 创建着色器
-    shader = std::make_unique<Shader>(
-        "shaders/sprite/sprite.vert",
-        "shaders/sprite/sprite.frag"
-    );
+    // 创建着色器（自动检测路径）
+    std::string vertPath = findShaderPath("shaders/sprite/sprite.vert");
+    std::string fragPath = findShaderPath("shaders/sprite/sprite.frag");
+    
+    std::cout << "Loading shaders:" << std::endl;
+    std::cout << "  Vertex: " << vertPath << std::endl;
+    std::cout << "  Fragment: " << fragPath << std::endl;
+    
+    shader = std::make_unique<Shader>(vertPath.c_str(), fragPath.c_str());
+    
+    if (shader->ID == 0) {
+        std::cerr << "Error: Failed to create shader!" << std::endl;
+        return;
+    }
     
     // 初始化渲染数据
     initRenderData();
+    
+    // 设置投影矩阵（只设置一次）
+    shader->use();
+    glm::mat4 projection = glm::ortho(-2.0f, 2.0f, -2.0f, 2.0f, -1.0f, 1.0f);
+    shader->setMatrix4("uProjection", projection);
     
     std::cout << "SpriteRenderer created" << std::endl;
 }
@@ -49,8 +78,8 @@ void SpriteRenderer::initRenderData() {
         1.0f, 0.0f,   1.0f, 0.0f   // 右下
     };
     
-    // 创建 VBO 并上传数据
-    auto vbo = std::make_unique<VertexBuffer>();
+    // 创建 VBO 并上传数据（保存引用以防止被销毁）
+    vbo = std::make_unique<VertexBuffer>();
     vbo->upload(vertices, 24, BufferUsage::DynamicDraw);
     
     // 设置顶点属性
@@ -81,10 +110,10 @@ void SpriteRenderer::updateVertexUV(const glm::vec4& uv) {
         1.0f, 0.0f,   uv.z, uv.y   // 右下
     };
     
-    // 更新 VBO
-    vao->bind();
+    // 更新 VBO（需要绑定 VBO）
+    vbo->bind();
     glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
-    vao->unbind();
+    vbo->unbind();
 }
 
 void SpriteRenderer::addAnimation(const Animation& anim) {
@@ -121,20 +150,47 @@ void SpriteRenderer::render(const glm::vec2& position,
                             float rotation,
                             const glm::vec3& color)
 {
-    if (!spriteSheet || !spriteSheet->isValid()) {
-        std::cerr << "Cannot render: invalid sprite sheet!" << std::endl;
+    // 详细的安全检查
+    if (!shader) {
+        std::cerr << "ERROR: shader is null!" << std::endl;
+        return;
+    }
+    
+    if (shader->ID == 0) {
+        std::cerr << "ERROR: shader ID is 0!" << std::endl;
+        return;
+    }
+    
+    if (!vao) {
+        std::cerr << "ERROR: VAO is null!" << std::endl;
+        return;
+    }
+    
+    if (!vbo) {
+        std::cerr << "ERROR: VBO is null!" << std::endl;
+        return;
+    }
+    
+    if (!spriteSheet) {
+        std::cerr << "ERROR: spriteSheet is null!" << std::endl;
+        return;
+    }
+    
+    if (!spriteSheet->isValid()) {
+        std::cerr << "ERROR: spriteSheet is invalid!" << std::endl;
         return;
     }
     
     if (!currentAnimation) {
-        std::cerr << "Cannot render: no current animation!" << std::endl;
+        std::cerr << "ERROR: currentAnimation is null!" << std::endl;
         return;
     }
     
     // 获取当前帧
     int frameIndex = currentAnimation->getCurrentFrame();
     if (frameIndex < 0 || frameIndex >= static_cast<int>(spriteSheet->getFrameCount())) {
-        std::cerr << "Invalid frame index: " << frameIndex << std::endl;
+        std::cerr << "ERROR: Invalid frame index: " << frameIndex 
+                  << " (count: " << spriteSheet->getFrameCount() << ")" << std::endl;
         return;
     }
     
@@ -162,10 +218,6 @@ void SpriteRenderer::render(const glm::vec2& position,
     
     // 缩放
     model = glm::scale(model, glm::vec3(size, 1.0f));
-    
-    // 设置投影矩阵（正交投影，适用于 2D）
-    glm::mat4 projection = glm::ortho(-2.0f, 2.0f, -2.0f, 2.0f, -1.0f, 1.0f);
-    shader->setMatrix4("uProjection", projection);
     
     // 设置 uniform
     shader->setMatrix4("uModel", model);

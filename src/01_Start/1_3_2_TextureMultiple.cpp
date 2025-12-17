@@ -11,8 +11,8 @@ public:
         : window(std::make_unique<Window>(width, height, title))
         , shader(std::make_unique<Shader>("shaders/01_shaders/1_3_2_TextureMultiple.vert", "shaders/01_shaders/1_3_2_TextureMultiple.frag"))
         , vao(std::make_unique<VertexArray>())
-        , texture1(std::make_unique<Texture>("textures/container.jpg"))
-        , texture2(std::make_unique<Texture>("textures/awesomeface.png")) {
+        , texture1(std::make_unique<Texture>("assets/textures/container.jpg"))
+        , texture2(std::make_unique<Texture>("assets/textures/awesomeface.png")) {
         init();
     }
 

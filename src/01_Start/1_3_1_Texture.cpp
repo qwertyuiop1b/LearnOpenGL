@@ -11,7 +11,7 @@ class TextureRendering {
 public:
 TextureRendering(unsigned int width, unsigned int height, const std::string& title)
         : window(std::make_unique<Window>(width, height, title))
-        , texture(std::make_unique<Texture>("textures/container.jpg"))
+        , texture(std::make_unique<Texture>("assets/textures/container.jpg"))
         , shader(std::make_unique<Shader>("shaders/01_shaders/1_3_1_Texture.vert", "shaders/01_shaders/1_3_1_Texture.frag"))
         , vao(std::make_unique<VertexArray>()) {
         init();

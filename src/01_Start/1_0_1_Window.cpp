@@ -1,7 +1,7 @@
-#include "utils/FPS.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include "utils/FPS.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 

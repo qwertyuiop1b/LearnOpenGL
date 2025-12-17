@@ -6,7 +6,7 @@
 #include <memory>
 #include <glad/glad.h>
 #include "SpriteTypes.h"
-#include "../utils/Texture2.h"
+#include "utils/Texture.h"
 
 namespace Sprite {
 
@@ -24,7 +24,7 @@ namespace Sprite {
  */
 class SpriteSheet {
 private:
-    std::unique_ptr<Texture2> texture;  // 精灵图纹理
+    std::unique_ptr<Texture> texture;  // 精灵图纹理
     std::vector<Frame> frames;          // 帧定义列表
     int textureWidth;                   // 纹理宽度（像素）
     int textureHeight;                  // 纹理高度（像素）

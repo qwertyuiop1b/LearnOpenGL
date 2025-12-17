@@ -41,7 +41,7 @@ int main() {
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "01_Triangle", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "1_1_1_Triangle", nullptr, nullptr);
     if (window == nullptr) {
         std::cout << "Failed to create glfw window" << std::endl;
         glfwTerminate();
