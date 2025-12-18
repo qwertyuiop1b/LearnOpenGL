@@ -3,7 +3,7 @@
 .exe
 .DS_Store
 .[cC]ache
-
+.cursor/
 [bB]uild/
 
 ^cmake-**/
