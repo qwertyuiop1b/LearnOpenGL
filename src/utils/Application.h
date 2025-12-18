@@ -34,8 +34,6 @@ public:
 protected:
     virtual void init(unsigned int glVersionMajor = 3, unsigned int glVersionMinor = 3);
 
-    void checkIsRequestExit();
-
     void update();
 
     void cleanup();

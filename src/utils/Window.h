@@ -33,9 +33,10 @@ private:
     unsigned int mWidth, mHeight;
     std::string mTitle;
 
-
-    void checkIsRequestExit();
     static void keyCallbackWrapper(GLFWwindow* window, int key, int scancode, int action, int mods);
+    static void mouseButtonCallbackWrapper(GLFWwindow* window, int button, int action, int mods);
+    static void cursorPosCallbackWrapper(GLFWwindow* window, double xpos, double ypos);
+    static void scrollCallbackWrapper(GLFWwindow* window, double xoffset, double yoffset);
     static void framebufferSizeCallbackWrapper(GLFWwindow* window, int width, int height);
 };
 
