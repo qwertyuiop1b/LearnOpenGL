@@ -79,23 +79,23 @@ endforeach ()
 
 
 
-# file(GLOB CHR2 ${PROJECT_SOURCE_DIR}/src/02_Light/*.cpp)
-# foreach (file2 ${CHR2})
-#     string(REGEX REPLACE ".*/(.+)\\.cpp" "\\1" exe2 ${file2})
-#     message(exe: ${exe2})
-#     add_executable(${exe2} ${file2} ${utils} ${GLAD_SRC})
+file(GLOB CHR2 ${PROJECT_SOURCE_DIR}/src/02_Light/*.cpp)
+foreach (file2 ${CHR2})
+    string(REGEX REPLACE ".*/(.+)\\.cpp" "\\1" exe2 ${file2})
+    message(exe: ${exe2})
+    add_executable(${exe2} ${file2} ${utils} ${GLAD_SRC})
 
-#     if (APPLE)
-#         target_link_libraries(${exe2} glfw glm assimp::assimp ${IMGUI_LIB}
-#             "-framework Cocoa"
-#             "-framework CoreFoundation"
-#             "-framework IOKit"
-#             "-framework CoreVideo"
-#         )
-#     elseif(WIN32 OR UNIX)
-#         target_link_libraries(${exe2} glfw glm assimp::assimp ${IMGUI_LIB})
-#     endif()
-# endforeach ()
+    if (APPLE)
+        target_link_libraries(${exe2} glfw glm assimp::assimp ${IMGUI_LIB}
+            "-framework Cocoa"
+            "-framework CoreFoundation"
+            "-framework IOKit"
+            "-framework CoreVideo"
+        )
+    elseif(WIN32 OR UNIX)
+        target_link_libraries(${exe2} glfw glm assimp::assimp ${IMGUI_LIB})
+    endif()
+endforeach ()
 
 
 # file(GLOB CHR3 ${PROJECT_SOURCE_DIR}/src/03_ModelLoading/*.cpp)
