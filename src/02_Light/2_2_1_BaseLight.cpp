@@ -14,9 +14,9 @@
 
 
 
-class ColorChapter {
+class BaseLight {
 public:
-    ColorChapter(unsigned int width, unsigned int height, const std::string& title) 
+    BaseLight(unsigned int width, unsigned int height, const std::string& title) 
     : window(std::make_unique<Window>(width, height, title))
     , containerShader(std::make_unique<Shader>("shaders/02_shaders/2_1_1_Color.vert", "shaders/02_shaders/2_1_1_Color.frag"))
     , lightShader(std::make_unique<Shader>("shaders/02_shaders/2_1_1_Light.vert", "shaders/02_shaders/2_1_1_Light.frag"))
@@ -77,7 +77,7 @@ public:
 
             lightShader->use();
             auto model = glm::mat4(1.0);
-            model = glm::translate(model, glm::vec3(3, 1, -2));
+            model = glm::translate(model, glm::vec3(3, 2, -2));
             model = glm::scale(model, glm::vec3(0.2f));
             lightShader->setFloat3("lightColor", lightColor);
             lightShader->setMatrix4("model", model);
@@ -113,7 +113,7 @@ private:
     
             -0.5f, -0.5f,  0.5f, 
              0.5f, -0.5f,  0.5f,  
-             0.5f,  0.5f,  0.5f,  
+             0.5f,  0.5f,  0.5f,   
              0.5f,  0.5f,  0.5f,  
             -0.5f,  0.5f,  0.5f, 
             -0.5f, -0.5f,  0.5f, 
@@ -172,7 +172,7 @@ private:
 
 
 int main() {
-    ColorChapter app(800, 600, "2_1_1_Color");
+    BaseLight app(800, 600, "2_2_1_BaseLight");
     try {
         app.run();
     } catch(const std::exception& e) {

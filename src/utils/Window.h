@@ -18,6 +18,8 @@ public:
 
     bool shouldClose() const { return glfwWindowShouldClose(mWindow); };
 
+    inline void exit() { glfwSetWindowShouldClose(mWindow, true); }
+
     inline void swapBuffer() { glfwSwapBuffers(mWindow); }
 
     inline void pollEvents() { glfwPollEvents(); }
