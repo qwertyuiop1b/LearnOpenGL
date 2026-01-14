@@ -5,6 +5,7 @@
 .[cC]ache
 .cursor/
 [bB]uild/
+imgui.ini
 
 ^cmake-**/
 cmake-build-debug-visual-studio--64/
