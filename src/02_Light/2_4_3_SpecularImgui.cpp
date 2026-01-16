@@ -1,18 +1,22 @@
-#include "utils/OribitCamera.h"
 #include "utils/Window.h"
+#include "utils/OribitCamera.h"
 #include "utils/Shader.h"
 #include "utils/Texture.h"
 #include "utils/VertexArray.h"
 #include "utils/VertexBuffer.h"
 #include "utils/Input.h"
+#include "utils/ImGuiManager.h"
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
 #include <memory>
 #include <string>
 #include <vector>
 
 
-class SpecularMap {
+class SpecularImgui {
 public:
-    SpecularMap(unsigned int width, unsigned int height, const std::string& title)
+    SpecularImgui(unsigned int width, unsigned int height, const std::string& title)
     : window(std::make_unique<Window>(width, height, title))
     , diffuseTex(std::make_unique<Texture>("assets/textures/container2.png"))
     , specularTex(std::make_unique<Texture>("assets/textures/container2_specular.png"))
@@ -21,14 +25,21 @@ public:
     , cubeVao(std::make_unique<VertexArray>())
     , lightVao(std::make_unique<VertexArray>())
     , orbitCamera(std::make_unique<OribitCamera>(glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f), 10.f, 1.f, glm::radians(90.f), glm::radians(45.f)))
+    , imguiManager(std::make_unique<ImGuiManager>(window->getGLFWWindow()))
     {
         init();
     }
 
     void run() {
         glEnable(GL_DEPTH_TEST);
+        
+        // 光照属性
         glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
         glm::vec3 lightPos(3, 0, 5);
+        glm::vec3 lightAmbient(0.2f, 0.2f, 0.2f);
+        glm::vec3 lightDiffuse(0.5f, 0.5f, 0.5f);
+        glm::vec3 lightSpecular(1.0f, 1.0f, 1.0f);
+        float shininess = 32.0f;
 
         Input& input = Input::getInstance();
 
@@ -38,7 +49,11 @@ public:
         while (!window->shouldClose()) {
             window->pollEvents();
 
-            if (input.GetMouseButton(GLFW_MOUSE_BUTTON_LEFT)) {
+            // 检查ImGui是否捕获了鼠标或键盘输入
+            bool ImGuiCaptured = ImGui::GetIO().WantCaptureMouse || ImGui::GetIO().WantCaptureKeyboard;
+
+            // 只有当ImGui没有捕获输入时，才允许OrbitCamera操作
+            if (!ImGuiCaptured && input.GetMouseButton(GLFW_MOUSE_BUTTON_LEFT)) {
                 if (!dragging) {
                     auto mousePos = input.GetMousePosition();
                     lastX = mousePos.x;
@@ -76,12 +91,12 @@ public:
 
             cubeShader->setInt("material.diffuse", 0);
             cubeShader->setInt("material.specular", 1);
-            cubeShader->setFloat("material.shininess", 32.0f);
+            cubeShader->setFloat("material.shininess", shininess);
 
             cubeShader->setFloat3("light.position", lightPos);
-            cubeShader->setFloat3("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
-            cubeShader->setFloat3("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
-            cubeShader->setFloat3("light.specular", glm::vec3(0.5f, 0.5f, 0.5f));
+            cubeShader->setFloat3("light.ambient", lightAmbient);
+            cubeShader->setFloat3("light.diffuse", lightDiffuse);
+            cubeShader->setFloat3("light.specular", lightSpecular);
 
             cubeVao->bind();
             diffuseTex->bind(0);
@@ -102,6 +117,42 @@ public:
             glDrawArrays(GL_TRIANGLES, 0, 36);
             lightVao->unbind();
 
+            // ImGui渲染
+            imguiManager->newFrame();
+            
+            // 创建光照控制窗口
+            ImGui::Begin("Lighting Controls");
+            
+            // 光源位置控制
+            ImGui::Text("Light Position");
+            ImGui::SliderFloat("X", &lightPos.x, -5.0f, 5.0f);
+            ImGui::SliderFloat("Y", &lightPos.y, -5.0f, 5.0f);
+            ImGui::SliderFloat("Z", &lightPos.z, -5.0f, 5.0f);
+            
+            // 光源颜色控制
+            ImGui::Text("Light Color");
+            ImGui::ColorEdit3("Color", (float*)&lightColor);
+            
+            // 环境光控制
+            ImGui::Text("Ambient");
+            ImGui::ColorEdit3("Ambient", (float*)&lightAmbient);
+            
+            // 漫反射光控制
+            ImGui::Text("Diffuse");
+            ImGui::ColorEdit3("Diffuse", (float*)&lightDiffuse);
+            
+            // 镜面反射光控制
+            ImGui::Text("Specular");
+            ImGui::ColorEdit3("Specular", (float*)&lightSpecular);
+            
+            // 反光度控制
+            ImGui::Text("Shininess");
+            ImGui::SliderFloat("Shininess", &shininess, 1.0f, 128.0f);
+            
+            ImGui::End();
+            
+            imguiManager->render();
+
             window->swapBuffer();
         }
     }
@@ -114,6 +165,7 @@ private:
     std::unique_ptr<VertexArray> cubeVao;
     std::unique_ptr<VertexArray> lightVao;
     std::unique_ptr<OribitCamera> orbitCamera;
+    std::unique_ptr<ImGuiManager> imguiManager;
 
     bool dragging = false;
     double lastX, lastY;
@@ -184,7 +236,7 @@ private:
 
 
 int main() {
-    SpecularMap app(800, 600, "2.4.2.SpecularMap");
+    SpecularImgui app(800, 600, "2.4.3.SpecularImgui");
     try {
         app.run();
     } catch(const std::exception& e) {

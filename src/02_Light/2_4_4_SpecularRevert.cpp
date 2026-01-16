@@ -10,13 +10,13 @@
 #include <vector>
 
 
-class SpecularMap {
+class SpecularRevert {
 public:
-    SpecularMap(unsigned int width, unsigned int height, const std::string& title)
+    SpecularRevert(unsigned int width, unsigned int height, const std::string& title)
     : window(std::make_unique<Window>(width, height, title))
     , diffuseTex(std::make_unique<Texture>("assets/textures/container2.png"))
     , specularTex(std::make_unique<Texture>("assets/textures/container2_specular.png"))
-    , cubeShader(std::make_unique<Shader>("shaders/02_shaders/2_4_2_SpecularMap.vert", "shaders/02_shaders/2_4_2_SpecularMap.frag"))
+    , cubeShader(std::make_unique<Shader>("shaders/02_shaders/2_4_4_SpecularRevert.vert", "shaders/02_shaders/2_4_4_SpecularRevert.frag"))
     , lightShader(std::make_unique<Shader>("shaders/02_shaders/2_1_1_Light.vert", "shaders/02_shaders/2_1_1_Light.frag"))
     , cubeVao(std::make_unique<VertexArray>())
     , lightVao(std::make_unique<VertexArray>())
@@ -79,9 +79,9 @@ public:
             cubeShader->setFloat("material.shininess", 32.0f);
 
             cubeShader->setFloat3("light.position", lightPos);
-            cubeShader->setFloat3("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+            cubeShader->setFloat3("light.ambient", glm::vec3(0.3f, 0.3f, 0.3f));
             cubeShader->setFloat3("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
-            cubeShader->setFloat3("light.specular", glm::vec3(0.5f, 0.5f, 0.5f));
+            cubeShader->setFloat3("light.specular", glm::vec3(0.5, 0.5, 0.5));
 
             cubeVao->bind();
             diffuseTex->bind(0);
@@ -184,7 +184,7 @@ private:
 
 
 int main() {
-    SpecularMap app(800, 600, "2.4.2.SpecularMap");
+    SpecularRevert app(800, 600, "2.4.4.SpecularRevert");
     try {
         app.run();
     } catch(const std::exception& e) {
